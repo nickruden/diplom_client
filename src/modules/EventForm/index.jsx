@@ -1,0 +1,1 @@
+export { default as EventForm } from './components/EventFrom/EventForm'

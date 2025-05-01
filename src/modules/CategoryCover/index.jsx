@@ -1,0 +1,1 @@
+export { CategoryCover } from "../CategoryCover/components/CategoryCover/CategoryCover";

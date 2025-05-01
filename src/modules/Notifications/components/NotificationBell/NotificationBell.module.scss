@@ -1,0 +1,31 @@
+.notificationDropdown {
+    width: 350px;
+    padding: 12px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+  }
+  
+  .notificationHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  
+  .notificationTitle {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .closeIcon {
+    font-size: 16px;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s ease;
+  }
+  
+  .closeIcon:hover {
+    color: #000;
+  }
+  

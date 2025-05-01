@@ -1,0 +1,14 @@
+.categoriesList {
+    padding: 50px 0px;
+
+    &.noPadding {
+        padding: 20px 0px 0px 0px;
+    }
+
+    .categoryCards {
+    
+        .categoryCard {
+            flex: 1;
+        }
+    }
+}

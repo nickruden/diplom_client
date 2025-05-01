@@ -1,0 +1,58 @@
+.ticketsPage {
+
+    &__title {
+      font-weight: 700;
+      font-size: 30px;
+      margin-bottom: 50px;
+    }
+  
+    &__header {
+      margin-bottom: 40px;
+  
+      .addButton {
+        font-weight: 600;
+        color: rgb(215, 108, 15);
+      }
+    }
+  
+    .ticketsInfo {
+      padding: 16px 60px;
+      border-top: 1px solid rgb(209, 209, 209);
+      border-bottom: 1px solid rgb(209, 209, 209);
+      max-width: 900px;
+  
+      .ticketsCount {
+        font-weight: 700;
+        font-size: 16px;
+      }
+    }
+  
+    .ticketCard {
+      max-width: 900px;
+      padding: 25px 55px 25px 20px;
+      border-bottom: 1px solid rgb(209, 209, 209);
+  
+      &:hover {
+        box-shadow: 2px 0px 10px 0px rgb(220, 220, 220);
+        cursor: pointer;
+      }
+
+      .inner {
+        width: 100%;
+      }
+      
+      .title {
+        margin-bottom: 0px!important;
+      }
+
+      .settingsButton {
+        padding: 5px;
+        border-radius: 100px;
+
+        &:hover {
+          background-color: rgba(205, 205, 205, 0.222);
+        }
+      }
+    }
+  }
+  

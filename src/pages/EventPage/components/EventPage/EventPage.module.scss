@@ -1,0 +1,175 @@
+.eventDetails {
+
+    &__description {
+        max-width: 750px;
+        width: 100%;
+
+        .eventCategory {
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+            border: 1px solid;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .eventTitle {
+            font-weight: 700;
+            font-size: 60px;
+            margin-bottom: 40px;
+        }
+
+        .innerTitle {
+            font-weight: 700;
+        }
+
+        .eventCreator {
+            margin-bottom: 50px;
+            
+            .creatorCard {
+                border-radius: 20px;
+                padding: 18px;
+                background-color: #ececec9c;
+
+                .creatorAvatar {
+                }
+
+                .creatorName {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #333;
+                }
+
+                .creatorFollowers {
+                    font-size: 14px;
+                    color: #666;
+                  }
+            }
+        }
+
+        .date {
+            margin-bottom: 50px;
+
+            &Body {
+                font-size: 16px;
+                color: rgb(59, 59, 59);
+
+                .dateFull {
+                    margin-left: 20px;
+                }
+
+                .eventLasts {
+                    margin-left: 20px;
+                }
+            }
+        }
+
+        .location {
+            margin-bottom: 50px;
+
+            &Body {
+                font-size: 16px;
+                font-weight: 600;
+                color: rgb(101, 101, 101);
+
+                .locationAddress {
+                    margin-left: 20px;
+                }
+
+                .locationMap {
+                    border-radius: 20px;
+                    overflow: hidden;
+
+                    .ymaps-2-1-79-map {
+                        width: 100%;
+                    }
+                }
+            }
+
+        }
+
+        .description {
+            margin-bottom: 50px;
+
+            &Text {
+                font-size: 16px;
+                line-height: 130%;
+                color: rgb(59, 59, 59);
+            }
+        }
+
+        .creatorEvents {
+            padding-top: 60px;
+            
+            &__title {
+                font-weight: 700;
+                color: rgb(59, 59, 59);
+            }
+        }
+    }
+
+    &__aside {
+        .stickyCard {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+            .ticketsContainer {
+                max-height: 260px;
+                overflow-y: auto;
+                margin-bottom: 16px;
+
+                &::-webkit-scrollbar {
+                    width: 3px; /* Уменьшаем ширину скроллбара */
+                  }
+                  
+                &::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                    border-radius: 2px;
+                  }
+                  
+                &::-webkit-scrollbar-thumb {
+                    background: #888;
+                    border-radius: 2px;
+                  }
+                  
+                &::-webkit-scrollbar-thumb:hover {
+                    background: #555;
+                  }
+
+            }
+
+            .cardInfo {
+
+                .totalCount {
+                    font-size: 18px;
+                    font-weight: 600;
+                }
+
+                .buyButton {
+                    font-weight: 500;
+                  }
+
+                  .actionButtons {
+
+                    .actionButton {
+                        display: flex;
+                        align-items: center;
+                        color: #666;
+                        
+                        &:hover {
+                          color: #1890ff;
+                        }
+                      }
+
+                      .divider {
+                        height: 30px;
+                        width: 1px;
+                      }
+                  }
+            }
+
+          }
+          
+    }
+}

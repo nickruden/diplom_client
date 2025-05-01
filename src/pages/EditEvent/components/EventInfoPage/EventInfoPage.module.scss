@@ -1,0 +1,19 @@
+.createEventPage {
+    height: 100%;
+
+    .formContent {
+        margin-bottom: 70px;
+    }
+
+    .formActions {
+        .buttonSave {
+            margin-bottom: 100px;
+            padding: 10px 20px;
+            background: rgb(215, 108, 15);
+
+            &:hover {
+                background: rgb(196, 99, 14) !important;
+            }
+        }
+    }
+}

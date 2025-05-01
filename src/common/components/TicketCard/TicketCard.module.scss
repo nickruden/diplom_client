@@ -1,0 +1,40 @@
+.ticketCard {
+    border: 1px solid #d6d6d6;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 600;
+
+        .ticketTitle {
+        }
+          
+        .ticketPrice {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f3960;
+        }
+    }
+
+    &__counter {
+      
+      .counterButton {
+        border: 1px solid #d9d9d9;
+
+        &:disabled {
+          color: rgba(0, 0, 0, 0.25);
+          cursor: not-allowed;
+        }
+      }
+
+      .countNumber {
+        text-align: center;
+        font-weight: 500;
+      }
+    }
+}

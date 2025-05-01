@@ -1,0 +1,32 @@
+/* customStyles.css */
+/* Для DatePicker */
+.ant-picker {
+  border-color: rgb(154, 154, 154) !important; /* Стандартный цвет рамки */
+}
+
+.ant-picker:hover {
+  border-color: black !important; /* Черная рамка при наведении */
+}
+
+.ant-picker:focus,
+.ant-picker:focus-within,
+.ant-picker-focused {
+  border-color: black !important; /* Черная рамка при фокусе */
+  box-shadow: none !important; /* Убираем тени */
+}
+
+/* Для TimePicker */
+.ant-time-picker {
+  border-color: rgb(154, 154, 154) !important; /* Стандартный цвет рамки */
+}
+
+.ant-time-picker:hover {
+  border-color: black !important; /* Черная рамка при наведении */
+}
+
+.ant-time-picker:focus,
+.ant-time-picker:focus-within,
+.ant-time-picker-focused {
+  border-color: black !important; /* Черная рамка при фокусе */
+  box-shadow: none !important; /* Убираем тени */
+}

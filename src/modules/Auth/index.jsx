@@ -1,0 +1,1 @@
+export { default as AuthModule } from './components/AuthUser/AuthUser';

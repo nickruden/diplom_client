@@ -1,0 +1,46 @@
+.ticket-drawer {
+    .ant-drawer-header {
+        .ant-drawer-header-title {
+            .ant-drawer-close {
+                width: auto;
+                height: auto;
+                padding: 5px;
+                
+                .anticon-close {
+                    height: 100%;
+                    width: 100%;
+
+                    svg {
+                        height: 100%;
+                        width: 100%;
+                    }
+                }
+            }
+
+            .ant-drawer-title {
+                font-weight: 600;
+                font-size: 20px;
+                text-align: end;
+            }
+        }
+    }
+
+    .ant-drawer-body {
+
+        .ticket-drawer__form {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            height: 100%;
+
+            .ticket-drawer__buttons {
+                margin-top: auto;
+                padding-bottom: 40px;
+
+                .submitButton {
+                    padding: 10px 20px;
+                }
+            }
+        }
+    }
+}

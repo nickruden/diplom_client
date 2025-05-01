@@ -1,0 +1,1 @@
+export { default as EventConfirm } from './components/EventConfirm/EventConfirm';

@@ -1,0 +1,79 @@
+/* ZERO STYLES */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+html,
+body, #root {
+    height: 100%;
+    font-family: "Montserrat";
+    font-size: 14px;
+    font-weight: 400;
+    color: #39364f;
+    line-height: 130%;
+    letter-spacing: .0em;
+    display: flex;
+    flex-direction: column;
+    margin: 0px;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin-bottom: 0px;
+}
+
+a {
+    text-decoration: none;
+    color: #8e929f;
+    cursor: pointer;
+}
+
+a:hover {
+    color: #2a12b4;
+}
+
+ol,
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    list-style: none;
+}
+
+img,
+iframe {
+    vertical-align: bottom;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+}
+
+input[type="checkbox"],
+button {
+    cursor: pointer;
+}
+
+button {
+    background: transparent;
+}
+
+.my-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0px 30px;
+    box-sizing: content-box;
+}
+
+.main {
+    flex: 1 0 auto;
+    overflow-x: hidden;
+    padding-top: 61px;
+}

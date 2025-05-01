@@ -1,0 +1,34 @@
+.myButton {
+    height: auto;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    outline: none; /* Убираем обводку */
+}
+
+.myButton:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.myButton:active {
+    box-shadow: none; 
+}
+
+.myButton.orange {
+    background-color: rgb(215, 108, 15);
+}
+.myButton.orange:hover {
+    background-color: rgb(196, 99, 14)!important;
+}
+.myButton.yellow {
+    color: #000;
+    background-color: rgb(255, 200, 0);
+}
+
+.myButton.yellow:hover {
+    color: #000!important;
+    border-color: rgb(255, 217, 78)!important;
+    background-color: rgb(255, 217, 78)!important;
+}

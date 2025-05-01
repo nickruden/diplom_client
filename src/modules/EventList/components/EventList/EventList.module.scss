@@ -1,0 +1,64 @@
+.eventSlider {
+    position: relative;
+
+    .eventSwiper {
+        padding: 20px 5px;
+
+        .eventSlide {
+            height: auto;
+            width: 100%;
+          }
+    }
+
+    .swiperNavButtonPrev, .swiperNavButtonNext {
+        position: absolute;
+        top: 50%;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #fff;
+        border: 1px solid #d9d9d9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        z-index: 10;
+        flex-shrink: 0;
+
+        &:hover {
+          background: #f0f0f0;
+          border-color: #bfbfbf;
+        }
+      
+        &:active {
+          transform: scale(0.95);
+        }
+    
+        &::after {
+            display: none;
+        }
+    
+        .anticon {
+            height: 50px;
+        }
+    }
+
+
+    .swiperNavButtonPrev {
+        left: -30px;
+    }
+
+    .swiperNavButtonNext {
+        right: -30px;
+    }
+
+  }
+
+.eventCards {
+    padding: 40px 0px;
+
+    .eventCard {
+        flex-basis: calc(25% - 22.5px);
+    }
+}

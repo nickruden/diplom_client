@@ -1,0 +1,32 @@
+.accountPage {
+    padding: 100px 0;
+  
+    .profile-card,
+    .info-block {
+      background: #f9f9f9;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    }
+  
+    .ant-form-item-label {
+      font-weight: 500;
+      margin-bottom: 6px; // отступ от лейбла до инпута
+    }
+  
+    .ant-input,
+    .ant-input-affix-wrapper,
+    .ant-input-textarea {
+      min-height: 48px;
+      font-size: 15px;
+    }
+  
+    .ant-form-item {
+      margin-bottom: 20px; // расстояние между инпутами
+    }
+  
+    .ant-upload-wrapper {
+      display: inline-block;
+    }
+  }
+  

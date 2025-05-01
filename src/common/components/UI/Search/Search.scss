@@ -1,0 +1,23 @@
+.my-search {
+
+
+.searchInput {
+    max-width: 500px;
+    border-color: rgb(154, 154, 154);
+
+    &__icon {
+        margin: 0px 10px 0px 5px;
+        color: rgba(0, 0, 0, 0.74);
+    }
+
+    &:hover {
+        border-color: #ff6600;
+      }
+  
+      &:focus, &:focus-within,
+      &.ant-input-focused {
+        border-color: #ff6600;
+        box-shadow: 0 0 0 1px #bd520b77;
+      }
+}
+}

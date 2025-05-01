@@ -1,0 +1,33 @@
+.filters {
+
+:where(.css-dev-only-do-not-override-1yacf91).ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector {
+    border: none;
+    cursor: pointer!important;
+}
+
+:where(.css-dev-only-do-not-override-1yacf91).ant-select-single.ant-select-show-arrow .ant-select-selection-item, :where(.css-dev-only-do-not-override-1yacf91).ant-select-single.ant-select-show-arrow .ant-select-selection-item, :where(.css-dev-only-do-not-override-1yacf91).ant-select-single.ant-select-show-arrow .ant-select-selection-search, :where(.css-dev-only-do-not-override-1yacf91).ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
+  padding-inline-end: 36px;
+  font-weight: 600;
+  font-size: 30px;
+  overflow: visible;
+}
+:where(.css-dev-only-do-not-override-1yacf91).ant-select-single.ant-select-show-arrow .ant-select-selection-item {
+  color: gray;
+  overflow: visible;
+}
+
+:where(.css-dev-only-do-not-override-1yacf91).ant-select .ant-select-arrow {
+  font-size: 20px;
+  height: auto;
+}
+
+.ant-select-show-search:where(.css-dev-only-do-not-override-1yacf91).ant-select:not(.ant-select-customize-input) .ant-select-selector input {
+  font-weight: 600;
+  font-size: 20px;
+  vertical-align: top;
+}
+
+:where(.css-dev-only-do-not-override-1yacf91).ant-select-dropdown {
+  padding-top: 10px;
+}
+}

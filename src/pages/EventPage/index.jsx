@@ -1,0 +1,1 @@
+export { EventPage } from './components/EventPage/EventPage';

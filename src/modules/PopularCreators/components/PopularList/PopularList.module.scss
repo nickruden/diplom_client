@@ -1,0 +1,63 @@
+.popularList {
+    padding: 40px 0px;
+
+    .slider {
+        position: relative;
+
+        .popularList__swiper {
+
+                .slide {
+                    width: auto;
+                    height: auto !important;
+                    display: flex;
+    
+                    .popularCard {
+                        height: 100%;
+                    }
+                }
+        }
+
+        .swiper-wrapper {
+            align-items: stretch !important;
+        }
+    }
+}
+  
+.swiperNavButtonPrev, .swiperNavButtonNext {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 10;
+    flex-shrink: 0;
+  
+    &:hover {
+      background: #f0f0f0;
+      border-color: #bfbfbf;
+    }
+  
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &::after {
+        display: none;
+    }
+
+    .anticon {
+        height: 50px;
+    }
+}
+
+.swiperNavButtonPrev {
+    left: -30px;
+}
+.swiperNavButtonNext {
+    right: -30px;
+}

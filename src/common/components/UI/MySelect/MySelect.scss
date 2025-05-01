@@ -1,0 +1,18 @@
+.custom-select {
+    max-width: 200px;
+  
+    .ant-select-selector {
+        border-color: rgb(154, 154, 154) !important;
+        
+      &:hover {
+        border-color: black !important;
+      }
+  
+      &:focus, &:focus-within,
+      &.ant-select-focused {
+        border-color: black !important;
+        box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2)!important;
+      }
+    }
+  }
+  

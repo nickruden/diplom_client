@@ -1,0 +1,38 @@
+/* FiltersList.css */
+.eventFilters {
+    padding: 30px 0px 20px 0px;
+    background: #fff;
+  
+  &__filterLocation {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px!important;
+  }
+
+  &__filterContainer {
+    border-bottom: 1px solid rgb(212, 212, 212);
+  }
+
+  &__filterAnchor {
+
+  }
+
+  &__filterItem {
+
+    &.active {
+      color: #1677ff!important;
+    }
+  }
+
+  :where(.css-dev-only-do-not-override-1yacf91).ant-anchor-wrapper .ant-anchor .ant-anchor-link-title:only-child {
+    font-size: 16px!important;
+  }
+
+  :where(.css-dev-only-do-not-override-1yacf91).ant-anchor-wrapper .ant-anchor .ant-anchor-link-title {
+    .eventFilters__filterItem {
+      &.active {
+        color: #1677ff!important;
+      }
+    }
+}
+}

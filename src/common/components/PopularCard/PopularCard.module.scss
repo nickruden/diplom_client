@@ -1,0 +1,57 @@
+.popularCard {
+    height: 100%;
+    max-width: 216px;
+    width: 100%;
+    background-color: #FFF;
+
+    &__container {
+        height: 100%;
+    }
+
+    &__innner {
+        padding: 20px;
+        height: 100%;
+
+        .popularCard__image {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .popularCard__body {
+            height: 100%;
+
+            .popularCard__titleLink {
+                display: flex;
+                width: 100%;
+
+                .popularCard__titleWrap {
+                    display: block;
+                    margin-bottom: 5px;
+                    width: 120px;
+                    text-align: center;
+    
+                    .popularCard__title {
+                        margin-bottom: 0px;
+                        display: block;
+                    }
+                }
+            }
+            
+            .popularCard__countFolowers {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                margin-bottom: 18px;
+                font-weight: 600;
+                color: gray;
+            }
+
+            .popularCard__button {
+                margin-top: auto;
+            }
+        }
+    }
+}
