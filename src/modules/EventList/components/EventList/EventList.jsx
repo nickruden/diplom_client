@@ -1,16 +1,15 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
-import { LeftOutlined, RightOutlined, LoadingOutlined } from "@ant-design/icons";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import "swiper/css";
 import "swiper/css/navigation";
 import { FaRegFaceSadTear } from "react-icons/fa6";
-
-import { EventCard } from "../../../../common/components";
+import { EventCard, MyEmpty } from "../../../../common/components";
 import { useGetEventByCategory, useGetEventsByCreator, useGetEvents } from "../../../../common/API/services/events/hooks.api";
-import { Card, Empty, Flex, Spin, Typography } from "antd";
-import styles from "./EventList.module.scss";
+import { Flex } from "antd";
 import MySkeleton from "../../../../common/components/Skeleton/MySkeleton";
+import styles from "./EventList.module.scss";
 
 const EventList = ({ type = "main", slug = null, creatorId = null, filter = "upcoming"}) => {
   const { data: eventsData, isLoading } = slug
@@ -39,10 +38,9 @@ const EventList = ({ type = "main", slug = null, creatorId = null, filter = "upc
     return (
       <div className={styles.eventList} style={{paddingBottom: "40px"}}>
         <div className="my-container">
-          <Empty
+          <MyEmpty
             image={<FaRegFaceSadTear size={80} color="gray" />}
-            description="Нет доступных событий"
-            style={{fontSize: '20px'}}
+            title="Нет доступных событий"
           />
         </div>
       </div>

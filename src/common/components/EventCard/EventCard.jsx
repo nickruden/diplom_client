@@ -16,6 +16,7 @@ import { useGetTicketsByEvent } from "../../API/services/tickets/hooks.api";
 
 const EventCard = ({ data, noLinks, ...props }) => {
   const [rows, setRows] = useState(2);
+  console.log(data)
 
   const priceInfo = getEventPrice(data.tickets);
 

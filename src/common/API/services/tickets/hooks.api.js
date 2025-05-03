@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createTicket, deleteTicket, getTicketsByEvent, updateTicket } from "./endpoints";
-import { jsx } from "react/jsx-runtime";
+import { buyTickets, createTicket, deleteTicket, getTicketsByEvent, updateTicket } from "./endpoints";
 
 export const useGetTicketsByEvent = (id) => {
   console.log(id)
@@ -49,8 +48,15 @@ export const useDeleteTicket = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["get_all_event_tickets"],
-        exact: false, // можно true, если ключ точно совпадает, иначе false
+        exact: false,
       });
     },
+  });
+};
+
+export const useBuyTickets = () => {
+  return useMutation({
+    mutationFn: (data) => buyTickets(data),
+    onSuccess: () => console.log("Вы купили билет!"),
   });
 };

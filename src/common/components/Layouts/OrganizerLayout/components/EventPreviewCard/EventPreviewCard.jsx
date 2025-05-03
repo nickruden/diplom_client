@@ -10,7 +10,7 @@ import styles from "./EventPreviewCard.module.scss";
 import MyButton from "../../../../UI/Button/MyButton";
 
 
-const EventPreviewCard = ({ title, date, status = "Архив", previewLink, onDelete }) => {
+const EventPreviewCard = ({ title, date, status = "Архив", previewLink }) => {
   const navigate = useNavigate();
 
   return (

@@ -120,7 +120,7 @@ const OrganizerLayout = ({ children, steps, formData = null, type = null }) => {
                   title={formData.title || formData.name}
                   date={formatTime(formData.startTime, {showDate: true})}
                   status={formData.status}
-                  previewLink={`/event/${formData.id}`}
+                  previewLink={`/event/${id}`}
                 />
               </Flex>
               <Divider style={{ margin: "20px 0px 10px 0px" }} /> </> : ''}
