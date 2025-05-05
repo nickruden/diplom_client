@@ -2,10 +2,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import MyButton from '../UI/Button/MyButton';
 import { useFollowOrganizer, useUnfollowOrganizer } from '../../API/services/user/hooks.api';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 
 const FollowButton = ({ organizerId, ...props }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const following = useSelector((state) => state.userFollowing?.followingOrganizers || []);
   const isFollowing = following.includes(organizerId);
@@ -14,15 +16,29 @@ const FollowButton = ({ organizerId, ...props }) => {
   const { mutate: unfollow } = useUnfollowOrganizer();
 
   const handleClick = () => {
-    if (isFollowing) {
-      unfollow(organizerId);
+    if (user) {
+      if (isFollowing) {
+        unfollow(organizerId);
+      } else {
+        follow(organizerId);
+      }
     } else {
-      follow(organizerId);
+      navigate(`/auth`)
     }
+
   };
 
   if (user?.id === organizerId) {
-    return null;
+    return (
+      <MyButton
+        type="default" 
+        style={{color: "black", background: "#FFF"}}
+        onClick={() => navigate(`/creator/${user.id}`)}
+        {...props}
+      >
+        Мой профиль
+      </MyButton>
+    );
   }
 
   return (

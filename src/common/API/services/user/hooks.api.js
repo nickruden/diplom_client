@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { deleteUser, followCreator, getCreatorInfoById, getCreatorsInfo, getFollowingCreatorsInfo, getMyFollowing, getUserInfo, unfollowCreator, updateUserInfo } from "./endpoints";
 import { useDispatch } from "react-redux";
-import { loginedUser, logoutUser } from "../../../store/slices/user.slice";
+import { loginedUser } from "../../../store/slices/user.slice";
 import { addFollowingOrganizer, removeFollowingOrganizer, setFollowingOrganizers } from "../../../store/slices/following.slice";
 
 export const useGetUserInfo = (id, isAuth) => {

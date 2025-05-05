@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
 import {
   Flex,
   Typography,
   Col,
-  Button,
   Tooltip,
-  Form,
-  Drawer,
-  Input,
 } from "antd";
 
 const { Title, Text } = Typography;
 
-import dayjs from 'dayjs';
-import { mockTickets } from "../../API/mockTickets"
-import { formatTime } from "../../../../common/utils/Date/formatTime";
+import { useCreateTicket, useDeleteTicket, useGetTicketsByEvent, useUpdateTicket } from "../../../../common/API/services/tickets/hooks.api";
 
 import { MoreOutlined } from "@ant-design/icons";
 import { IoTicketOutline } from "react-icons/io5";
@@ -24,16 +20,13 @@ import { GoPlus } from "react-icons/go";
 
 import MyDropdown from "../../../../common/components/UI/Dropdown/MyDropdown";
 import MyButton from "../../../../common/components/UI/Button/MyButton";
-import MyInput from "../../../../common/components/UI/Input/MyInput";
-
-import MyDateTimePicker from "../../../../common/components/UI/DatePicker/MyDatePicker";
-
-import styles from "./TicketsList.module.scss";
-import { useCreateTicket, useDeleteTicket, useGetTicketsByEvent, useUpdateTicket } from "../../../../common/API/services/tickets/hooks.api";
-import { useParams } from "react-router-dom";
 import { MyLoader } from "../../../../common/components";
 import MyEmpty from "../../../../common/components/Empty/MyEmpty";
+
 import TicketDrawer from "../TicketDrawer/TicketDrawer";
+
+import styles from "./TicketsList.module.scss";
+import { formatTime } from "../../../../common/utils/Date/formatDate";
 
 
 const TicketsPage = () => {
@@ -123,7 +116,7 @@ const TicketsPage = () => {
                         {" "}
                         В продаже
                       </span>{" "}
-                      • до {formatTime(ticket.salesEnd, { showDate: true })}
+                      • до {formatTime(ticket.salesEnd)}
                     </Text>
                   </Col>
                   <Col span={4}>

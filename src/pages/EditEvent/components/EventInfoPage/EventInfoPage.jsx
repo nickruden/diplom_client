@@ -21,6 +21,7 @@ const EditEventPage = () => {
 
   const { mutate: editEvent } = useEditEvent();
   const { data: eventData, isLoading: eventDataLoader } = useGetEventById(id);
+  console.log(1)
 
   // хук работы с объектом формы мероприятия
   const { formData, handleInputChange, preparedData, formErrors, wasValidated, validateForm, generalError, isDirty } = useUpdateEventForm(eventData);

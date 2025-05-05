@@ -6,6 +6,7 @@ import { CreatorPage } from "../../pages/CreatorPage";
 import { EditEventInfoPage, EventConfirmPage, EventTicketsPage } from "../../pages/EditEvent";
 import { EventPage } from "../../pages/EventPage";
 import { EventStats, MyEvents } from "../../pages/ManageEvents";
+import { MyFavoritePage } from "../../pages/MyFavorite";
 import { FolowingPage } from "../../pages/MyFolowing";
 import { SearchEvents } from "../../pages/SearchEvents";
 
@@ -25,6 +26,10 @@ export const routes = [
     {
         path: '/my-folowing',
         element: <FolowingPage />,
+    },
+    {
+        path: '/my-favorites',
+        element: <MyFavoritePage />,
     },
     {
         path: '/event/:id',

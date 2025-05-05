@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { buyTickets, createTicket, deleteTicket, getTicketsByEvent, updateTicket } from "./endpoints";
 
 export const useGetTicketsByEvent = (id) => {
-  console.log(id)
   return useQuery({
     queryKey: ["get_all_event_tickets", id],
     queryFn: async () => { 

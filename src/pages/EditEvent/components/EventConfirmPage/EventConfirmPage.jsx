@@ -29,7 +29,7 @@ const EventConfirmPage = () => {
   const handleSaveButton = () => {
     const updatedData = {
       ...preparedData,
-      status: 'Опубликовано', // Принудительно переопределяем
+      status: 'Опубликовано',
     };
     
     editEvent({

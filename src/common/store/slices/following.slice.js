@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { deleteAuthTokens } from '../../utils/MyStorage/tokens/deleteAuthTokens';
 
 const initialState = {
     followingOrganizers: [],

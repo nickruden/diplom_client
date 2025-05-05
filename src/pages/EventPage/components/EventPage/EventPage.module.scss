@@ -65,6 +65,19 @@
             }
         }
 
+        .refound {
+            margin-bottom: 50px;
+
+            .refoundBody {
+                font-size: 16px;
+                color: rgb(59, 59, 59);
+
+                .refoundText {
+                    margin-left: 20px;
+                }
+            }
+        }
+
         .location {
             margin-bottom: 50px;
 
@@ -75,15 +88,6 @@
 
                 .locationAddress {
                     margin-left: 20px;
-                }
-
-                .locationMap {
-                    border-radius: 20px;
-                    overflow: hidden;
-
-                    .ymaps-2-1-79-map {
-                        width: 100%;
-                    }
                 }
             }
 
@@ -96,6 +100,20 @@
                 font-size: 16px;
                 line-height: 130%;
                 color: rgb(59, 59, 59);
+            }
+        }
+
+        .tickets {
+            margin-bottom: 50px;
+            scroll-margin-top: 180px;
+
+            .ticketsContainer {
+                max-height: 400px;
+                overflow: auto;
+
+                .ticket {
+                    flex: 1 1 calc(100% - 30px);
+                }
             }
         }
 

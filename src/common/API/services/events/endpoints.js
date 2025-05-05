@@ -38,7 +38,25 @@ export const delereEvent = async (id) => {
 };
 
 export const deleteImage = async (publicId) => {
-  console.log("deleteImage publicId:", publicId);
   const response = await apiInstance.delete(`/events/image/delete/${publicId}`);
+  return response.data;
+};
+
+export const getMyFavoriteEvents = async () => {
+  const response = await apiInstance.get(`/user/my-favorite-events`);
+  return response.data;
+};
+
+export const favoritedEvent = async (id) => {
+  const response = await apiInstance.post(`/events/set-favorite/${id}`);
+  return response.data;
+};
+
+export const unsetFavoriteEvent = async (id) => {
+  const response = await apiInstance.delete(`/events/unset-favorite/${id}`);
+  return response.data;
+};
+export const getFavoriteEventsInfo = async () => {
+  const response = await apiInstance.get(`/events/favorite-events/info`);
   return response.data;
 };

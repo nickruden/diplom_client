@@ -1,22 +1,26 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
+import { Row, Col, Flex, Typography } from "antd";
+const { Title, Paragraph } = Typography;
+
+import { formatDate } from "../../utils/Date/formatDate";
+import { getEventPrice } from "../../utils/Ticket/formatPrice";
+
 import { FaMapLocationDot } from "react-icons/fa6";
 import { MdCurrencyRuble } from "react-icons/md";
 
-import { Card, Avatar, Row, Col, Flex, Typography } from "antd";
-const { Title, Paragraph } = Typography;
+import MyAvatar from "../Avatar/MyAvatar";
+
 
 import styles from "./EventCard.module.scss";
-import { useGetCreatorInfoById } from "../../API/services/user/hooks.api";
-import { formatDate } from "../../utils/Date/formatDate";
-import { getEventPrice } from "../../utils/Ticket/formatPrice";
-import MyAvatar from "../Avatar/MyAvatar";
-import { useGetTicketsByEvent } from "../../API/services/tickets/hooks.api";
+import { useAuth } from "../../hooks/useAuth";
+import FavoriteButton from "../FavoriteButton/FavoriteButton";
+
 
 const EventCard = ({ data, noLinks, ...props }) => {
   const [rows, setRows] = useState(2);
-  console.log(data)
+  const { user }= useAuth();
 
   const priceInfo = getEventPrice(data.tickets);
 
@@ -31,8 +35,18 @@ const EventCard = ({ data, noLinks, ...props }) => {
                 alt="promo image event"
               />
             </div>
-          ) : (
-            <Link to={`/event/${data.id}`}>
+          ) : user?.id === data.organizerId ?
+          <Link to={`/event/${data.id}`}>
+            <div className={styles.eventCard__image}>
+              <img
+                src={data.images.find((image) => image.isMain)?.imageUrl}
+                alt="promo image event"
+              />
+            </div>
+          </Link> :
+          <Flex style={{position: "relative"}}>
+          <FavoriteButton eventId={data.id} style={{top: 10, right: 10}} />
+            <Link to={`/event/${data.id}`} style={{width: "100%"}}>
               <div className={styles.eventCard__image}>
                 <img
                   src={data.images.find((image) => image.isMain)?.imageUrl}
@@ -40,7 +54,8 @@ const EventCard = ({ data, noLinks, ...props }) => {
                 />
               </div>
             </Link>
-          )}
+            </Flex>
+            }
           <Flex vertical gap="5px" className={styles.eventCard__body}>
             <div className={styles.eventCard__timeStart}>
               {formatDate(data.startTime, true)}

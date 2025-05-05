@@ -1,73 +1,91 @@
-import React, { useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { YMaps, Map, Placemark } from "@pbe/react-yandex-maps";
+import React, { useRef } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { Affix, Avatar, Button, Card, Divider, Flex, Skeleton, Spin, Typography } from "antd";
-const { Title, Text } = Typography;
+import { Affix, Avatar, Flex, Typography } from "antd";
+const { Title } = Typography;
 
-import { AppLayout, FollowButton, MyLoader, TicketCard } from "../../../../common/components";
-import { EventList } from "../../../../modules/EventList";
-
-import { mockSingleEventData } from "../../API/mock";
 import { categoryConfig } from "../../API/caregoryStyles";
 
-import { FaRegCalendarAlt } from "react-icons/fa";
+import { FaRegCalendarAlt, FaRegSadTear } from "react-icons/fa";
 import { MdAccessTime } from "react-icons/md";
 import { FaMapLocationDot } from "react-icons/fa6";
-import { CiHeart } from "react-icons/ci";
-import { TbFaceIdError } from "react-icons/tb";
-import { MdOutlineReportGmailerrorred } from "react-icons/md";
+import { BsCashCoin } from "react-icons/bs";
+
+import { useGetEventById } from "../../../../common/API/services/events/hooks.api";
+import { calculateDuration } from "../../../../common/utils/Date/calculateDuration";
+import { useAuth } from "../../../../common/hooks/useAuth";
+import { formatDate, formatTimeRange } from "../../../../common/utils/Date/formatDate";
+
+
+import { AppLayout, FollowButton, MyEmpty, MyLoader, MyLocationMap, MySkeleton, TicketCard } from "../../../../common/components";
+
+import { EventList } from "../../../../modules/EventList";
+import { BigBanner } from "../../../../modules/BigBanner";
+
+
+import { CartProvider, useCart } from "../../context/CartContext";
+
+import TicketsAside from "../TicketsAside/TicketsAside";
 
 import styles from "./EventPage.module.scss";
 import MyButton from "../../../../common/components/UI/Button/MyButton";
-import { useGetEventById } from "../../../../common/API/services/events/hooks.api";
-import { formatDate } from "../../../../common/utils/Date/formatDate";
-import { formatTime, formatTimeRange } from "../../../../common/utils/Date/formatTime";
-import { useGetCreatorInfoById } from "../../../../common/API/services/user/hooks.api";
-import { calculateDuration } from "../../../../common/utils/Date/calculateDuration";
-import { BigBanner } from "../../../../modules/BigBanner";
-import TicketsAside from "../TicketsAside/TicketsAside";
-import { CartProvider } from "../../context/CartContext";
+import { CiEdit } from "react-icons/ci";
+import { useGetTicketsByEvent } from "../../../../common/API/services/tickets/hooks.api";
+
 
 export const EventPage = () => {
-  const [ticketCounts, setTicketCounts] = useState({});
-  const [totalPrice, setTotalPrice] = useState(0);
-
+  const { user } = useAuth();
   const { id } = useParams();
+  const navigate = useNavigate();
+  const refTickets = useRef(null);
+  const { ticketCounts, increment, decrement } = useCart();
+  console.log(ticketCounts)
+
   const {
     data: eventData,
     isLoading: eventLoaded,
   } = useGetEventById(id);
-  console.log(eventData)
+
+  const {
+    data: ticketsData,
+    isLoading: ticketsLoading,
+  } = useGetTicketsByEvent(id)
 
   return (
     <AppLayout>
       {eventLoaded ? (
         <MyLoader />
+      ) : eventData.length === 0 || !eventData ? (
+        <MyEmpty
+          title="Данные потерялись, но мы обязательно их найдём"
+          image={<FaRegSadTear size={120} />}
+        />
       ) : (
         <>
           <BigBanner data={eventData.images} type="eventPage" />
           <div className={styles.eventDetails}>
             <Flex justify="space-between" className="my-container">
               <div className={styles.eventDetails__description}>
-                <Link
-                  to={`/category/${eventData.category.slug}`}
-                  className={styles.eventCategory}
-                  style={{
-                    color:
-                      categoryConfig[eventData.category.slug]?.textColor ||
-                      "#000",
-                    background:
-                      categoryConfig[eventData.category.slug]?.gradient ||
-                      "#EEE",
-                    backgroundImage:
-                      categoryConfig[eventData.category.slug]?.gradient,
-                    borderColor:
-                      categoryConfig[eventData.category.slug]?.gradient,
-                  }}
-                >
-                  {eventData.category.name}
-                </Link>
+                <Flex gap={30}>
+                  <Link
+                    to={`/category/${eventData.category.slug}`}
+                    className={styles.eventCategory}
+                    style={{
+                      color:
+                        categoryConfig[eventData.category.slug]?.textColor ||
+                        "#000",
+                      background:
+                        categoryConfig[eventData.category.slug]?.gradient ||
+                        "#EEE",
+                      backgroundImage:
+                        categoryConfig[eventData.category.slug]?.gradient,
+                      borderColor:
+                        categoryConfig[eventData.category.slug]?.gradient,
+                    }}
+                  >
+                    {eventData.category.name}
+                  </Link>
+                </Flex>
                 <Title level={1} className={styles.eventTitle}>
                   {eventData.name}
                 </Title>
@@ -107,7 +125,9 @@ export const EventPage = () => {
                     <Flex align="center" gap="15px" className={styles.dateFull}>
                       {" "}
                       <FaRegCalendarAlt />
-                      {formatTimeRange(eventData.startTime, eventData.endTime)}
+                      {formatTimeRange(eventData.startTime, eventData.endTime, {
+                        showWeekday: true,
+                      })}
                     </Flex>
                     <Flex
                       align="center"
@@ -118,9 +138,37 @@ export const EventPage = () => {
                       {calculateDuration(
                         eventData.startTime,
                         eventData.endTime
-                      )}{" "}
-                      часа(ов)
+                      )}
                     </Flex>
+                  </Flex>
+                </div>
+                <div className={styles.refound}>
+                  <Title level={3} className={styles.innerTitle}>
+                    Политика возврата билетов
+                  </Title>
+                  <Flex className={styles.refoundBody}>
+                    {formatDate(eventData.refundDate) ===
+                    formatDate(eventData.createdAt) ? (
+                      <Flex
+                        align="center"
+                        gap="15px"
+                        className={styles.refoundText}
+                        style={{ color: "red" }}
+                      >
+                        {" "}
+                        <BsCashCoin /> Организатор запретил возврат средств
+                      </Flex>
+                    ) : (
+                      <Flex
+                        align="center"
+                        gap="15px"
+                        className={styles.refoundText}
+                      >
+                        {" "}
+                        <BsCashCoin /> Возврат средств действует до -{" "}
+                        {formatDate(eventData.refundDate)}
+                      </Flex>
+                    )}
                   </Flex>
                 </div>
                 <div className={styles.location}>
@@ -137,18 +185,7 @@ export const EventPage = () => {
                       {eventData.location}
                     </Flex>
                     <div className={styles.locationMap}>
-                      <YMaps>
-                        <Map
-                          defaultState={{
-                            center: [55.751574, 37.573856], // Москва
-                            zoom: 10,
-                          }}
-                          width="100%"
-                          height="400px"
-                        >
-                          <Placemark geometry={[55.751574, 37.573856]} />
-                        </Map>
-                      </YMaps>
+                      <MyLocationMap location={eventData.location} height="400px" />
                     </div>
                   </Flex>
                 </div>
@@ -156,8 +193,34 @@ export const EventPage = () => {
                   <Title level={3} className={styles.innerTitle}>
                     Описание
                   </Title>
-                  <div className={styles.descriptionText}>
-                    {eventData.description}
+                  <div
+                    className={styles.descriptionText}
+                    dangerouslySetInnerHTML={{ __html: eventData.description }}
+                  ></div>
+                </div>
+                <div className={styles.tickets} ref={refTickets}>
+                  <Title level={3} className={styles.innerTitle}>
+                    Билеты
+                  </Title>
+                  <div className={styles.ticketsBody}>
+                    {ticketsLoading ? [...Array(2)].map((_, i) =>  {
+                      <Flex gap={30} wrap className={styles.ticketsContainer}>
+                        <MySkeleton width="100%" height="250px" /> 
+                        </Flex>
+                    }) :
+                    <Flex gap={10} wrap className={styles.ticketsContainer}>
+                      {ticketsData.tickets.map((ticket) => (
+                        <div className={styles.ticket}>
+                        <TicketCard
+                          key={ticket.id}
+                          ticket={ticket}
+                          count={ticketCounts[ticket.id] || 0}
+                          onIncrement={() => increment(ticket.id)}
+                          onDecrement={() => decrement(ticket.id)}
+                        />
+                        </div>
+                      ))}
+                    </Flex>}
                   </div>
                 </div>
                 <div className={styles.creatorEvents}>
@@ -167,11 +230,29 @@ export const EventPage = () => {
                   <EventList type="slider" creatorId={eventData.organizerId} />
                 </div>
               </div>
-              <CartProvider>
-                <Affix offsetTop={100}>
-                  <TicketsAside eventData={eventData} />
+              {user?.id === eventData.organizerId ? (
+                <Affix offsetTop={100} style={{ marginRight: 10 }}>
+                  <MyButton
+                    icon={<CiEdit size={20} />}
+                    onClick={() =>
+                      navigate(`/events/manage/edit/${eventData.id}/info`)
+                    }
+                  >
+                    {" "}
+                    Редактировать{" "}
+                  </MyButton>
                 </Affix>
-              </CartProvider>
+              ) : (
+                ""
+              )}
+                <Affix offsetTop={100}>
+                  <TicketsAside
+                    userId={user?.id}
+                    eventData={eventData}
+                    ticktesRef={refTickets}
+                    ticketsData={ticketsData}
+                  />
+                </Affix>
             </Flex>
           </div>
         </>
@@ -179,3 +260,9 @@ export const EventPage = () => {
     </AppLayout>
   );
 };
+
+export default () => (
+  <CartProvider>
+    <EventPage />
+  </CartProvider>
+);

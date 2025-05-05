@@ -10,6 +10,7 @@ import MyButton from '../../../../common/components/UI/Button/MyButton';
 
 import './FollowerCard.module.scss';;
 import { useUnfollowOrganizer } from '../../../../common/API/services/user/hooks.api';
+import { MyAvatar } from '../../../../common/components';
 
 const FollowerCard = ({ creatorInfo }) => {
   const [ellipsis, setEllipsis] = useState(true);
@@ -31,11 +32,7 @@ const FollowerCard = ({ creatorInfo }) => {
       <Flex>
         <Col>
           <Link to={`/creator/${creatorInfo.id}`}>
-            <Avatar
-              size={80}
-              src={creatorInfo.avatar}
-              style={{ border: "1px solid #eee" }}
-            />
+          <MyAvatar imageSrc={creatorInfo.avatar} size={80} />
           </Link>
         </Col>
         <Col flex="auto">

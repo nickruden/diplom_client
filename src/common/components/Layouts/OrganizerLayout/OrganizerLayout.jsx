@@ -15,7 +15,6 @@ import miniLogo from '../../../../assets/MiniLogo.svg';
 import { logoutUser } from "../../../store/slices/user.slice";
 import { useAuth } from "../../../hooks/useAuth";
 import menuItems from "./helpers/siderMenuItems";
-import { formatTime } from "../../../utils/Date/formatTime";
 
 import MyButton from "../../UI/Button/MyButton";
 
@@ -25,6 +24,7 @@ import SidebarMenu from "../../SidebarMenu/SidebarMenu";
 import EventPreviewCard from "./components/EventPreviewCard/EventPreviewCard";
 
 import styles from "./OrganizerLayout.module.scss";
+import { formatDate, formatTime } from "../../../utils/Date/formatDate";
 
 
 const OrganizerLayout = ({ children, steps, formData = null, type = null }) => {

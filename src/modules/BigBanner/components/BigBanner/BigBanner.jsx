@@ -18,9 +18,8 @@ import MyButton from "../../../../common/components/UI/Button/MyButton";
 import {
   useGetEvents,
 } from "../../../../common/API/services/events/hooks.api";
-import { formatDate } from "../../../../common/utils/Date/formatDate";
-import { formatTime } from "../../../../common/utils/Date/formatTime";
 import MySkeleton from "../../../../common/components/Skeleton/MySkeleton";
+import { formatDate, formatTime } from "../../../../common/utils/Date/formatDate";
 
 const BigBanner = ({ data, type = "main" }) => {
   const [rows, setRows] = useState(2);
@@ -119,7 +118,7 @@ const BigBanner = ({ data, type = "main" }) => {
                               </Paragraph>
                               <div className={styles.bigBanner__time}>
                                 <IoCalendarOutline />{" "}
-                                {formatDate(banner.startTime, true, true)} •{" "}
+                                {formatDate(banner.startTime)} •{" "}
                                 {formatTime(banner.startTime)}
                               </div>
                               <div className={styles.bigBanner__location}>

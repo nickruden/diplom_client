@@ -1,41 +1,44 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../../../../assets/Logo.svg';
-import { AudioOutlined, BellOutlined } from '@ant-design/icons';
-import { Input, Space, Dropdown, Menu, Avatar, Flex, Badge, Tabs, List } from 'antd';
+import { Flex } from 'antd';
 import { CgProfile } from "react-icons/cg";
-import { FaMapMarkerAlt } from 'react-icons/fa';
 import MyButton from '../../../UI/Button/MyButton';
-import styles from './Header.module.scss';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../../../store/slices/user.slice';
-import { IoIosArrowDown, IoMdNotificationsOutline } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
 import MyDropdown from '../../../UI/Dropdown/MyDropdown';
 import { CiCirclePlus, CiLogout } from 'react-icons/ci';
 import { resetFollowingOrganizer } from '../../../../store/slices/following.slice';
 import SearchInput from '../../../UI/Search/Search';
 import { HiOutlineHome } from 'react-icons/hi2';
-import { IoNotificationsOutline } from "react-icons/io5";
 import NotificationBell from '../../../../../modules/Notifications/components/NotificationBell/NotificationBell';
+import { resetFavoriteEvent } from '../../../../store/slices/favorite.slice';
 
 
+import styles from './Header.module.scss';
+import MyLoader from '../../../MyLoader/MyLoader';
+import { persistor } from '../../../../store';
 
-const { Search } = Input;
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const followingOrganizers = useSelector((state) => state.userFollowing.followingOrganizers);
   const followingCount = followingOrganizers.length;
-  const favoriteCount = null;
   
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const favoriteEvents = useSelector((state) => state.userFavoriteEvents.favoriteEvents);
+  const favoriteEventsCount = favoriteEvents.length;
+
   
   const logout = () => {
-    dispatch(logoutUser());
     dispatch(resetFollowingOrganizer());
+    dispatch(resetFavoriteEvent());
+    dispatch(logoutUser());
+    persistor.purge();
     navigate('/');
   };
 
@@ -60,7 +63,7 @@ const Header = () => {
     },
     {
       key: '4',
-      label: <Link to="/favorites">Избранное ({favoriteCount || 0})</Link>,
+      label: <Link to="/my-favorites">Избранное ({favoriteEventsCount})</Link>,
     },
     {
       key: '5',
@@ -85,7 +88,7 @@ const Header = () => {
               <SearchInput placeholder="Найти мероприятие" size='large' width='450px' />
             </nav>
           <div className={styles.header__actions}>
-            <Link to={`/events/manage/create`} className={styles.createButton}>
+            <Link to={!user ? `/auth` : `/events/manage/create`} className={styles.createButton}>
               <CiCirclePlus size={30} style={{fontWeight: 600}} /> Создать
             </Link>
             {user ? (

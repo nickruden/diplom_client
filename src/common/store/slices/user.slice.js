@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { deleteAuthTokens } from '../../utils/MyStorage/tokens/deleteAuthTokens';
-import { useNavigate } from 'react-router-dom';
 
 const initialState = {
     user: null,

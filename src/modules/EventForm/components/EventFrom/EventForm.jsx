@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { YMaps, Map, Placemark } from "@pbe/react-yandex-maps";
 
 import { Form, Typography, Flex, Divider } from "antd";
 const { Title, Text } = Typography;
 
-import { DeleteOutlined, UploadOutlined } from "@ant-design/icons";
 import { CiCircleList, CiLocationOn, CiTextAlignRight } from "react-icons/ci";
 import { LiaHeadingSolid } from "react-icons/lia";
 import { MdOutlineCalendarViewDay, MdOutlineEditCalendar } from "react-icons/md";
@@ -20,7 +19,7 @@ import MySwitch from "../../../../common/components/UI/Switch/MySwitch";
 import MySegmented from "../../../../common/components/UI/Segmented/MuSegmented";
 import MyDateTimePicker from '../../../../common/components/UI/DatePicker/MyDatePicker'
 
-import { MySeleton, TextEditor, ImageUploader  } from "../../../../common/components";
+import { MySkeleton, TextEditor, ImageUploader, MyLocationMap  } from "../../../../common/components";
 
 // этот импорт не правильный с точки зрения архитектуры модульности
 import { BigBanner } from '../../../BigBanner';
@@ -77,7 +76,7 @@ const EventInfo = ({formData, handleInputChange, formErrors, wasValidated}) => {
                     {formData.images?.length > 0 ? (
                       <BigBanner type="uploadExemple" data={formData.images} />
                     ) : (
-                      <MySeleton width="800px" height="350px" />
+                      <MySkeleton width="800px" height="350px" />
                     )}
                   </Flex>
                   <ImageUploader
@@ -357,32 +356,14 @@ const EventInfo = ({formData, handleInputChange, formErrors, wasValidated}) => {
                 />
 
                 {formData.locationType === "offline" && (
-                  <>
-                    <SearchInput
-                      placeholder="Введите адрес или выберите на карте"
+                    <MyInput
                       value={formData.address}
+                      placeholder="Введите название мероприятия"
+                      size="large"
                       onChange={(e) =>
                         handleInputChange("address", e.target.value)
                       }
-                      borderRadius="20px"
-                      size="large"
-                      style={{ marginBottom: 16 }}
                     />
-                    <div className={styles.mapPlaceholder}>
-                      <YMaps>
-                        <Map
-                          defaultState={{
-                            center: [55.751574, 37.573856], // Москва
-                            zoom: 10,
-                          }}
-                          width="100%"
-                          height="300px"
-                        >
-                          <Placemark geometry={[55.751574, 37.573856]} />
-                        </Map>
-                      </YMaps>
-                    </div>
-                  </>
                 )}
               </Form.Item>
             </Flex>
