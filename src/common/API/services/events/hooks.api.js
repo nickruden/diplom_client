@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAllEvents, getEventsByCreator, getEventById, getEventsByCategory, createEvent, updateEvent, delereEvent, deleteImage, getFavoriteEventsInfo, unsetFavoriteEvent, favoritedEvent, getMyFavoriteEvents } from "./endpoints";
+import { getAllEvents, getEventsByCreator, getEventById, getEventsByCategory, createEvent, updateEvent, delereEvent, deleteImage, getFavoriteEventsInfo, unsetFavoriteEvent, favoritedEvent, getMyFavoriteEvents, getEventPuchases } from "./endpoints";
 import { updateEventCount } from "../../../store/slices/user.slice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -13,7 +13,6 @@ export const useGetEvents = (filters = {}) => {
 };
 
 export const useGetEventById = (id) => {
-  console.log('11', id)
   return useQuery({
     queryKey: ["get_event_by_id", id],
     queryFn: () => getEventById(id),
@@ -99,7 +98,6 @@ export const useGetFavoriteEvents = (isAuth) => {
     queryKey: ['get_favorite_events'],
     queryFn: async () => {
       const data = await getMyFavoriteEvents();
-      console.log(data)
       dispatch(setFavoriteEvent(data));
       return data;
     },
@@ -136,5 +134,13 @@ export const useGetFavoriteEventsInfo = () => {
       const data = await getFavoriteEventsInfo();
       return data;
     },
+  });
+};
+
+
+export const useGetEventPuchases = (id) => {
+  return useQuery({
+    queryKey: ["get_event_puchases_id", id],
+    queryFn: () => getEventPuchases(id),
   });
 };

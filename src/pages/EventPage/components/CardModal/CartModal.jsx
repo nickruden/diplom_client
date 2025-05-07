@@ -12,64 +12,113 @@ import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../../../common/hooks/useAuth";
 import MyButton from "../../../../common/components/UI/Button/MyButton";
 import styles from "./CartModal.module.scss";
-import { useBuyTickets } from "../../../../common/API/services/tickets/hooks.api";
 import { useForm } from "antd/es/form/Form";
-import MyInput from '../../../../common/components/UI/Input/MyInput'
+import MyInput from "../../../../common/components/UI/Input/MyInput";
 import { IoTicketOutline } from "react-icons/io5";
+import { formatTime } from "../../../../common/utils/Date/formatDate";
+import { useCancelPayment, useConfirmPayment, useCreatePayment } from "../../../../common/API/services/payment/hooks.api";
+import { MyEmpty } from "../../../../common/components"
+import { MdOutlinePayment } from "react-icons/md";
 
 
 const { Title, Text, Paragraph } = Typography;
 
 const CartModal = ({ tickets, eventData }) => {
-  const { ticketCounts, isCartOpen, closeCart } = useCart();
-  const [rows, setRows] = useState(2);
   const { user } = useAuth();
+
+  const [rows, setRows] = useState(1);
   const [form] = useForm();
 
-  const [selectedMethod, setSelectedMethod] = useState("card");
+  const { ticketCounts, isCartOpen, closeCart } = useCart();
+  const [confirmationToken, setConfirmationToken] = useState(null);
 
-  const {mutate: buyMutation} = useBuyTickets();
+  const { mutateAsync: createPeyment } = useCreatePayment();
+  const { mutateAsync: confirmPayment } = useConfirmPayment();
 
-  const selectedTickets = tickets.filter((ticket) => ticketCounts[ticket.id] > 0);
+  useEffect(() => {
+    if (user) {
+      form.setFieldsValue({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      });
+    }
+  }, []);
+
+  const selectedTickets = tickets.filter(
+    (ticket) => ticketCounts[ticket.id] > 0
+  );
+
   const total = selectedTickets.reduce(
     (sum, t) => sum + t.price * ticketCounts[t.id],
     0
   );
   const finalTotal = total;
 
-  useEffect(() => {
-    if (user) {
-        form.setFieldsValue({
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email
-        });
-      }
-  }, [])
 
+  // инициализация виджета оплаты
+  useEffect(() => {
+    const scriptId = "yookassa-checkout";
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.src = "https://yookassa.ru/checkout-widget/v1/checkout-widget.js";
+      script.id = scriptId;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!confirmationToken || !window.YooMoneyCheckoutWidget) return;
+
+    const checkout = new window.YooMoneyCheckoutWidget({
+      confirmation_token: confirmationToken,
+      error_callback: function (error) {
+        console.error("YooKassa widget error", error);
+      },
+    });
+
+    checkout.render("payment-form").then(() => {
+      console.log("Платёжная форма загружена");
+    
+      checkout.on("success", async () => {
+        console.log("Платёж успешно завершён");
+    
+        message.success("Оплата прошла успешно");
+    
+        const ticketsToBuy = selectedTickets.map((ticket) => ({
+          idTicket: ticket.id,
+          count: ticketCounts[ticket.id],
+        }));
+
+        await confirmPayment({idBuyer: user.id, tickets: ticketsToBuy});
+
+    
+        // // 3. Через 2-3 секунды редирект
+        // setTimeout(() => {
+        //   window.location.href = `${window.location.origin}/payment-success`;
+        // }, 2500);
+      });
+    });
+    
+  }, [confirmationToken]);
 
   const handlePay = async () => {
-    if (!user) return message.error("Вы не авторизованы");
-  
     try {
-      const ticketsToBuy = selectedTickets.map((ticket) => ({
-        idTicket: ticket.id,
-        count: ticketCounts[ticket.id],
-      }));
-
       const data = {
-        idBuyer: user.id,
-        tickets: ticketsToBuy,
-      }
-      
-    await buyMutation(data);
-  
-      message.success("Оплата прошла успешно!");
-      closeCart();
+        amount: finalTotal,
+      };
+      const payment = await createPeyment(data);
+      setConfirmationToken(payment.confirmation.confirmation_token);
     } catch (error) {
       console.error(error);
-      message.error("Ошибка при покупке билетов");
+      message.error("Ошибка при создании платежа");
     }
+  };
+
+  const handleCancel = async () => {
+      setConfirmationToken(null);
+      closeCart();
   };
   
 
@@ -94,24 +143,39 @@ const CartModal = ({ tickets, eventData }) => {
             </Title>
             <Flex vertical gap={20} className={styles.formGroup}>
               <Flex gap={20}>
-                <Form.Item name="firstName" className={styles.input}>
+                <Form.Item
+                  name="firstName"
+                  label="Имя"
+                  className={styles.input}
+                >
                   <MyInput
                     placeholder="Имя"
                     size="large"
                     width="300px"
                     value={user?.firstName}
+                    disabled
                   />
                 </Form.Item>
-                <Form.Item name="lastName" className={styles.input}>
+                <Form.Item
+                  name="lastName"
+                  label="Фамилия"
+                  className={styles.input}
+                >
                   <MyInput
                     placeholder="Фамилия"
                     size="large"
                     width="300px"
                     value={user?.lastName}
+                    disabled
                   />
                 </Form.Item>
               </Flex>
-              <Form.Item name="email" className={styles.input}>
+              <Form.Item
+                name="email"
+                label="На эту почту прийдёт билет"
+                rules={[{ required: true }]}
+                className={styles.input}
+              >
                 <MyInput placeholder="Email" size="large" value={user?.email} />
               </Form.Item>
             </Flex>
@@ -119,52 +183,14 @@ const CartModal = ({ tickets, eventData }) => {
 
           <Flex vertical className={styles.patmentType}>
             <Title level={3} className={styles.paymentTitle}>
-              Введите данные карты
+              Оплата
             </Title>
             <Divider style={{ margin: "15px 0px" }} />
-
-            {selectedMethod === "card" && (
-              <Flex gap={70} vertical className={styles.cardForm}>
-                <Form.Item
-                  name="cardNumber"
-                  rules={[{ required: true, message: "Введите номер карты" }]}
-                  className={styles.input}
-                >
-                  <MyInput
-                    placeholder="Номер карты"
-                    maxLength={19}
-                    width="100%"
-                    size='large'
-                  />
-                </Form.Item>
-                <Flex justify="space-between" className={styles.expiryCvc}>
-                  <Form.Item
-                    name="expiry"
-                    rules={[
-                      { required: true, message: "Введите срок действия" },
-                    ]}
-                    className={styles.input}
-                  >
-                    <MyInput
-                      placeholder="ММ / ГГ"
-                      maxLength={5}
-                      width="150px"
-                                          size='large'
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    name="cvc"
-                    rules={[{ required: true, message: "Введите CVC" }]}
-                    className={styles.input}
-                  >
-                    <MyInput
-                      placeholder="CVC"
-                      maxLength={3}
-                      width="100px"
-                                          size='large'
-                    />
-                  </Form.Item>
-                </Flex>
+            {!confirmationToken ? (
+              <MyEmpty title="После подтверждения оплаты тут появится виджет" image={<MdOutlinePayment size={120} />} />
+            ) : (
+              <Flex vertical className={styles.paymentWidget}>
+                <div id="payment-form"></div>
               </Flex>
             )}
           </Flex>
@@ -192,9 +218,9 @@ const CartModal = ({ tickets, eventData }) => {
                   </Title>
                 </Paragraph>
                 <Text type="secondary" className={styles.eventDate}>
-                  {new Date(eventData.startTime).toLocaleString("ru-RU", {
-                    dateStyle: "full",
-                    timeStyle: "short",
+                  {formatTime(eventData.startTime, {
+                    showDate: true,
+                    showWeekday: true,
                   })}
                 </Text>
               </div>
@@ -227,20 +253,17 @@ const CartModal = ({ tickets, eventData }) => {
                 Сумма к оплате: {finalTotal.toFixed(0)} ₽
               </div>
               <Flex gap={10} className={styles.buttonWrapper}>
-                <MyButton
-                  type="default"
-                  onClick={closeCart}
-                  block
-                >
+                <MyButton type="default" onClick={handleCancel} block>
                   Отмена
                 </MyButton>
                 <MyButton
                   type="primary"
                   bgColor="green"
-                  onClick={() => form.submit()}
+                  onClick={handlePay}
                   block
+                  disabled={!!confirmationToken} 
                 >
-                  Оплатить
+                  Перейти к оплате
                 </MyButton>
               </Flex>
             </div>

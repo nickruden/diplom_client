@@ -6,6 +6,7 @@ import {
   Typography,
   Col,
   Tooltip,
+  Modal,
 } from "antd";
 
 const { Title, Text } = Typography;
@@ -27,18 +28,20 @@ import TicketDrawer from "../TicketDrawer/TicketDrawer";
 
 import styles from "./TicketsList.module.scss";
 import { formatTime } from "../../../../common/utils/Date/formatDate";
+import { useEditEvent } from "../../../../common/API/services/events/hooks.api";
 
 
-const TicketsPage = () => {
+const TicketsPage = ({refetchEventData}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingTicket, setEditingTicket] = useState(null);
 
   const { id } = useParams();
 
-  const { data: allTicketsData, isLoading: ticketsLoading } = useGetTicketsByEvent(id);
+  const { data: allTicketsData, isLoading: ticketsLoading, isError, error, refetch } = useGetTicketsByEvent(id);
   const { mutate: createTicket } = useCreateTicket();
   const { mutate: updateTicket } = useUpdateTicket();
-  const { mutate: deleteTicket } = useDeleteTicket();
+  const { mutateAsync: deleteTicket, error: deleteError } = useDeleteTicket(id);
+  const { mutateAsync: updateEvent } = useEditEvent();
 
   const handleSaveTicket = async (ticketData) => {
     try {
@@ -52,6 +55,29 @@ const TicketsPage = () => {
       setEditingTicket(null);
     } catch (error) {
       console.error("Ошибка при сохранении:", error);
+    }
+  };
+
+  const handleDeleteTicket = async (ticketId) => {
+    try {
+      await deleteTicket(ticketId);
+      await refetch();
+      await updateEvent({ id: ticketId, data: { status: "Черновик" } });
+      await refetchEventData();
+    } catch (error) {
+      if (error?.response?.data?.error === "TICKET_HAS_PURCHASES") {
+        Modal.error({
+          title: 'Ошибка удаления',
+          content: 'Невозможно удалить билет. Есть люди купившие его! Если хотите чтобы билет больше не продавался, уменьшите общее количество этого билета до количества купленных!',
+          okText: 'Понятно',
+        });
+      } else {
+        Modal.error({
+          title: 'Ошибка',
+          content: 'Не удалось удалить билет',
+          okText: 'Закрыть',
+        });
+      }
     }
   };
 
@@ -95,8 +121,8 @@ const TicketsPage = () => {
         </Flex>
 
         {ticketsLoading ? (
-          <MyLoader />
-        ) : !allTicketsData || allTicketsData.length === 0 ? (
+          <MyLoader style={{paddingTop: 50}} />
+        ) : (isError && error?.response?.status === 404) || (!allTicketsData || allTicketsData.length === 0) ? (
           <MyEmpty image={<LuTickets size={80} />} title="Нет билетов" />
         ) : (
           <Flex vertical gap={0}>
@@ -143,7 +169,8 @@ const TicketsPage = () => {
                             label: "Редактировать",
                             onClick: () => {setEditingTicket(ticket); setDrawerOpen(true)},
                           },
-                          { key: "delete", label: "Удалить", onClick: () => deleteTicket(ticket.id), },
+                          { key: "delete", label: "Удалить", onClick: () => handleDeleteTicket(ticket.id)
+                        },
                         ],
                       }}
                       trigger={["click"]}

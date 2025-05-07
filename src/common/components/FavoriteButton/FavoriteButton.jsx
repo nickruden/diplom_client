@@ -10,7 +10,7 @@ import './FavoriteButton.scss'
 import { useSetFavoriteEvent, useUnsetFavoriteEvent } from '../../API/services/events/hooks.api';
 
 
-const FavoriteButton = ({ eventId, size = 24, style = {}, ...props }) => {
+const FavoriteButton = ({ eventId, size = 24, style = {}, heartDefaultColor = "gray", title = null, ...props }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -28,9 +28,21 @@ const FavoriteButton = ({ eventId, size = 24, style = {}, ...props }) => {
   };
 
   return (
-      <MyButton onClick={handleClick} style={{ fontSize: size, ...style }} {...props} className='favoriteButton'>
-        {isFavorite ? <HeartFilled style={{ color: 'red' }} /> : <HeartOutlined style={{ color: '#FFF' }} />}
-      </MyButton>
+    <MyButton
+      onClick={handleClick}
+      type="text"
+      style={{ fontSize: size, cursor: "pointer", ...style }}
+      {...props}
+    >
+      {isFavorite ? (
+        <HeartFilled style={{ color: "red" }} />
+      ) : (
+        <HeartOutlined style={{ color: heartDefaultColor }} />
+      )}
+      <span style={title ? { display: "inline" } : { display: "none" }}>
+        {title}
+      </span>
+    </MyButton>
   );
 };
 

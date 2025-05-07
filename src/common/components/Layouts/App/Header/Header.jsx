@@ -59,7 +59,7 @@ const Header = () => {
     },
     {
       key: '3',
-      label: <Link to="/tickets">Купленные билеты</Link>,
+      label: <Link to="/my-tickets">Купленные билеты</Link>,
     },
     {
       key: '4',

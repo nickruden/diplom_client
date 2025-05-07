@@ -8,6 +8,7 @@ import { EventPage } from "../../pages/EventPage";
 import { EventStats, MyEvents } from "../../pages/ManageEvents";
 import { MyFavoritePage } from "../../pages/MyFavorite";
 import { FolowingPage } from "../../pages/MyFolowing";
+import { MyTicketsPage } from "../../pages/MyTickets";
 import { SearchEvents } from "../../pages/SearchEvents";
 
 export const routes = [
@@ -30,6 +31,10 @@ export const routes = [
     {
         path: '/my-favorites',
         element: <MyFavoritePage />,
+    },
+    {
+        path: '/my-tickets',
+        element: <MyTicketsPage />,
     },
     {
         path: '/event/:id',

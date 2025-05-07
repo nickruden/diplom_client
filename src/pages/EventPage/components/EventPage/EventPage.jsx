@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { Affix, Avatar, Flex, Typography } from "antd";
@@ -11,7 +11,7 @@ import { MdAccessTime } from "react-icons/md";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { BsCashCoin } from "react-icons/bs";
 
-import { useGetEventById } from "../../../../common/API/services/events/hooks.api";
+import { useEditEvent, useGetEventById } from "../../../../common/API/services/events/hooks.api";
 import { calculateDuration } from "../../../../common/utils/Date/calculateDuration";
 import { useAuth } from "../../../../common/hooks/useAuth";
 import { formatDate, formatTimeRange } from "../../../../common/utils/Date/formatDate";
@@ -39,17 +39,35 @@ export const EventPage = () => {
   const navigate = useNavigate();
   const refTickets = useRef(null);
   const { ticketCounts, increment, decrement } = useCart();
-  console.log(ticketCounts)
 
   const {
     data: eventData,
     isLoading: eventLoaded,
+    isSuccess: eventSuccess,
   } = useGetEventById(id);
 
   const {
     data: ticketsData,
     isLoading: ticketsLoading,
-  } = useGetTicketsByEvent(id)
+  } = useGetTicketsByEvent(id);
+
+  const { mutate: updateEventViews } = useEditEvent();
+
+  useEffect(() => {
+    if (eventSuccess && user.id !== eventData?.organizerId) {
+      console.log(eventData);
+      console.log(eventSuccess)
+      const updatedViews = Number(eventData.viewsEvent) + 1;
+      console.log(eventData.viewsEvent)
+      console.log(1, updatedViews)
+      
+      // Отправляем запрос на сервер
+      updateEventViews({
+        id: id, 
+        data: { viewsEvent: updatedViews }
+      });
+    }
+  }, []);
 
   return (
     <AppLayout>
@@ -147,8 +165,7 @@ export const EventPage = () => {
                     Политика возврата билетов
                   </Title>
                   <Flex className={styles.refoundBody}>
-                    {formatDate(eventData.refundDate) ===
-                    formatDate(eventData.createdAt) ? (
+                    {!eventData.refundDate ? (
                       <Flex
                         align="center"
                         gap="15px"

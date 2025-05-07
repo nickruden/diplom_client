@@ -20,7 +20,7 @@ export const deleteTicket = async (id) => {
   return response.data;
 };
 
-export const buyTickets = async (data) => {
-  const response = await apiInstance.post(`/tickets/buy/ticket`, data);
+export const getMyTickets = async () => {
+  const response = await apiInstance.get(`/user/my-tickets`);
   return response.data;
 };

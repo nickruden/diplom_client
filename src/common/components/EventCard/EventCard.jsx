@@ -27,7 +27,7 @@ const EventCard = ({ data, noLinks, ...props }) => {
   return (
     <div className={styles.eventCard} {...props}>
       <div className={styles.eventCard__container}>
-        <Flex vertical className={styles.eventCard__innner}>
+        <Flex vertical className={styles.eventCard__inner}>
           {noLinks ? (
             <div className={styles.eventCard__image}>
               <img
@@ -35,18 +35,8 @@ const EventCard = ({ data, noLinks, ...props }) => {
                 alt="promo image event"
               />
             </div>
-          ) : user?.id === data.organizerId ?
-          <Link to={`/event/${data.id}`}>
-            <div className={styles.eventCard__image}>
-              <img
-                src={data.images.find((image) => image.isMain)?.imageUrl}
-                alt="promo image event"
-              />
-            </div>
-          </Link> :
-          <Flex style={{position: "relative"}}>
-          <FavoriteButton eventId={data.id} style={{top: 10, right: 10}} />
-            <Link to={`/event/${data.id}`} style={{width: "100%"}}>
+          ) : user?.id === data.organizerId ? (
+            <Link to={`/event/${data.id}`}>
               <div className={styles.eventCard__image}>
                 <img
                   src={data.images.find((image) => image.isMain)?.imageUrl}
@@ -54,8 +44,23 @@ const EventCard = ({ data, noLinks, ...props }) => {
                 />
               </div>
             </Link>
+          ) : (
+            <Flex className={styles.imageWrap}>
+              <FavoriteButton
+                eventId={data.id}
+                style={{ top: 10, right: 10 }}
+                className={styles.favoriteButton}
+              />
+              <Link to={`/event/${data.id}`} style={{ width: "100%" }}>
+                <div className={styles.eventCard__image}>
+                  <img
+                    src={data.images.find((image) => image.isMain)?.imageUrl}
+                    alt="promo image event"
+                  />
+                </div>
+              </Link>
             </Flex>
-            }
+          )}
           <Flex vertical gap="5px" className={styles.eventCard__body}>
             <div className={styles.eventCard__timeStart}>
               {formatDate(data.startTime, true)}

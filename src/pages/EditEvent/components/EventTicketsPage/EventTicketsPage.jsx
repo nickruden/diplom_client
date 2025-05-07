@@ -20,7 +20,7 @@ const EditEventPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: eventData, isLoading: eventDataLoader } = useGetEventById(id);
+  const { data: eventData, isLoading: eventDataLoader, refetch: refetchEventData } = useGetEventById(id);
 
   // хук работы с объектом формы мероприятия
   const { formData } = useUpdateEventForm(eventData);
@@ -44,13 +44,14 @@ const EditEventPage = () => {
           onStepClick={handleStepChange}
         />
       }
+      refetchEventData={refetchEventData}
     >
       <Flex vertical justify="space-between" className={styles.createEventPage}>
         <div className={styles.formContent}>
           {eventDataLoader ? (
             <MyLoader />
           ) : (
-            <EventTickets />
+            <EventTickets refetchEventData={refetchEventData} />
           )}
         </div>
         <Flex justify="center" gap={10} className={styles.formActions}>

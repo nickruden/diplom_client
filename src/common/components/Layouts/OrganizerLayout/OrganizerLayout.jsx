@@ -27,7 +27,7 @@ import styles from "./OrganizerLayout.module.scss";
 import { formatDate, formatTime } from "../../../utils/Date/formatDate";
 
 
-const OrganizerLayout = ({ children, steps, formData = null, type = null }) => {
+const OrganizerLayout = ({ children, steps, formData = null, type = null, refetchEventData }) => {
   const { user } = useAuth();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -121,6 +121,7 @@ const OrganizerLayout = ({ children, steps, formData = null, type = null }) => {
                   date={formatTime(formData.startTime, {showDate: true})}
                   status={formData.status}
                   previewLink={`/event/${id}`}
+                  refetchEventData={refetchEventData}
                 />
               </Flex>
               <Divider style={{ margin: "20px 0px 10px 0px" }} /> </> : ''}

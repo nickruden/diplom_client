@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { Flex } from "antd";
@@ -13,31 +13,46 @@ import { MyLoader, MySteps, OrganizerLayout } from "../../../../common/component
 import { EventConfirm } from "../../../../modules/EventConfirm";
 
 import styles from "./EventConfirmPage.module.scss";
+import Title from "antd/es/typography/Title";
 
 
 const EventConfirmPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const { id } = useParams();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { mutate: editEvent } = useEditEvent();
-  const { data: eventData, isLoading: eventDataLoader } = useGetEventById(id);
+  const { mutateAsync: editEvent } = useEditEvent();
+  const { data: eventData, isLoading: eventDataLoader, refetch: refetchEventData } = useGetEventById(id);
 
   // хук работы с объектом формы мероприятия
   const { formData, handleInputChange, preparedData } = useUpdateEventForm(eventData);
 
-  const handleSaveButton = () => {
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500)
+  }, [])
+
+  const handleSaveButton = async () => {
+    if (eventData.tickets.length === 0) {
+      navigate(`/events/manage/edit/${id}/tickets`);
+      return;
+    }
+  
+    setIsLoading(true);
+  
     const updatedData = {
       ...preparedData,
       status: 'Опубликовано',
     };
-    
-    editEvent({
-      id,
-      data: updatedData,
-    });
   
-    navigate('/events/manage/my-events');
+    try {
+      await editEvent({ id, data: updatedData });
+      navigate('/events/manage/my-events');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleStepChange = (stepIndex) => {
@@ -55,13 +70,24 @@ const EventConfirmPage = () => {
           onStepClick={handleStepChange}
         />
       }
+      refetchEventData={refetchEventData}
     >
       <div className={styles.createEventPage}>
         <div className={styles.formContent}>
-          {eventDataLoader ? (
-            <MyLoader />
+          {eventDataLoader || isLoading ? (
+            <MyLoader style={{height: "60vh"}} />
+          ) : eventData.tickets.length === 0 ? (
+            <>
+              <Flex className={styles.errorMessage}>
+                <Title level={4} className={styles.errorText}>
+                  Вы не заполнили билеты! Для публикации необходимо создать
+                  минимум 1 билет на мероприятие!
+                </Title>
+              </Flex>
+            <EventConfirm handleInputChange={handleInputChange} eventData={eventData} />
+            </>
           ) : (
-            <EventConfirm handleInputChange={handleInputChange} />
+            <EventConfirm handleInputChange={handleInputChange} eventData={eventData} />
           )}
         </div>
         <Flex gap={10} className={styles.formActions}>

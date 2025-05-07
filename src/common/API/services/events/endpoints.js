@@ -26,13 +26,11 @@ export const createEvent = async (data) => {
 };
 
 export const updateEvent = async (id, data) => {
-  console.log(id, data)
   const response = await apiInstance.patch(`/events/edit/${id}`, data);
   return response.data;
 };
 
 export const delereEvent = async (id) => {
-  console.log(id)
   const response = await apiInstance.delete(`/events/delete/${id}`);
   return response.data;
 };
@@ -58,5 +56,10 @@ export const unsetFavoriteEvent = async (id) => {
 };
 export const getFavoriteEventsInfo = async () => {
   const response = await apiInstance.get(`/events/favorite-events/info`);
+  return response.data;
+};
+
+export const getEventPuchases = async (id) => {
+  const response = await apiInstance.get(`/events/puchases/${id}`);
   return response.data;
 };

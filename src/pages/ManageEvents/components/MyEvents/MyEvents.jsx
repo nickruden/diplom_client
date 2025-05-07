@@ -14,6 +14,7 @@ import {
   Flex,
   Tabs,
   Spin,
+  Modal,
 } from "antd";
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -38,6 +39,7 @@ import "../../SeachLine.scss";
 
 import styles from "./MyEvents.module.scss";
 import { IoIosArrowDown } from "react-icons/io";
+import { formatTime } from "../../../../common/utils/Date/formatDate";
 
 const statusColors = {
   Опубликовано: "green",
@@ -58,8 +60,8 @@ const EventManagementPage = () => {
 
 
   const { data: eventsList, isLoading: eventListLoading, refetch: eventsListRefetch } = useGetEventsByCreator(user.id);
-  const { mutate: updateStatus } = useEditEvent();
-  const { mutate: deleteEvent } = useDeleteEvent();
+  const { mutateAsync: updateStatus } = useEditEvent();
+  const { mutateAsync: deleteEvent, error: errorDeleteEvent } = useDeleteEvent();
 
   const handleUpdateStatus = async ({ id, data }) => {
     setLoadingEventId(id);
@@ -71,6 +73,50 @@ const EventManagementPage = () => {
       setLoadingEventId(null);
     }
   };
+
+const handleDeleteEvent = async (event) => {
+  try {
+    await deleteEvent(event.id);
+    message.success('Событие успешно удалено');
+    await eventsListRefetch();
+  } catch (error) {
+    console.log(errorDeleteEvent?.response?.data?.statusCode)
+    if (errorDeleteEvent?.response?.data?.statusCode === 409) {
+      Modal.confirm({
+        title: 'Невозможно удалить событие',
+        content: (
+          <div>
+            <p>У этого события есть проданные билеты!</p>
+            <p>Рекомендуем перевести событие в черновики.</p>
+            <Divider style={{ margin: '12px 0' }} />
+            <p style={{ color: '#faad14' }}>
+              Если событие не будет опубликовано за 2 дня до начала, 
+              средства автоматически вернутся покупателям.
+            </p>
+          </div>
+        ),
+        okText: 'Перевести в черновики',
+        cancelText: 'Отмена',
+        onOk: async () => {
+          try {
+            await handleUpdateStatus({
+              id: event.id,
+              data: "Черновик"
+            });
+            
+            Modal.info({
+              title: 'Важно!',
+              content: `Если событие не будет опубликовано до ${dayjs(event.startTime).subtract(2, 'day').format('DD.MM.YYYY')}, все средства будут автоматически возвращены покупателям. После этой даты вы сможете удалить событие.`,
+              okText: 'Понятно',
+            });
+          } catch (err) {
+          }
+        }
+      });
+    } else {
+    }
+  }
+};
 
   return (
     <OrganizerLayout>
@@ -229,7 +275,7 @@ const EventManagementPage = () => {
                     </Paragraph>
                     <Text type="secondary">{event.location}</Text>
                     <Text type="secondary">
-                      {dayjs(event.date).format("DD MMMM YYYY")}
+                      {formatTime(event.startTime, {showDate: true})}
                     </Text>
                   </Flex>
                 </Flex>
@@ -335,7 +381,7 @@ const EventManagementPage = () => {
                     {
                       key: "delete",
                       label: "Удалить",
-                      onClick: () => deleteEvent(event.id),
+                      onClick: () => handleDeleteEvent(event),
                     },
                   ],
                 }}

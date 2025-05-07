@@ -1,7 +1,6 @@
 export function getEventPrice(tickets) {
     // Конвертируем строки 'false'/'true' в boolean и фильтруем доступные билеты
     const availableTickets = tickets.filter(ticket => ticket.isSoldOut !== 1);
-    console.log(availableTickets)
   
     // Получаем уникальные цены доступных билетов (конвертируем в число)
     const uniquePrices = [...new Set(

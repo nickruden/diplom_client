@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Drawer, Form, Input, Flex, Typography } from "antd";
 import MyInput from "../../../../common/components/UI/Input/MyInput";
 import MyDateTimePicker from "../../../../common/components/UI/DatePicker/MyDatePicker";
@@ -10,6 +10,8 @@ const { Title } = Typography;
 
 const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
   const [form] = Form.useForm();
+  const [hasPurchases, setHasPurchases] = useState(false);
+  console.log(ticket)
 
   // Устанавливаем значения при открытии
   useEffect(() => {
@@ -26,6 +28,12 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
         timeStart: start,
         timeEnd: end,
       });
+
+      if (ticket.soldCount > 0) {
+        setHasPurchases(true);
+      } else {
+        setHasPurchases(false);
+      }
     } else {
       form.resetFields();
     }
@@ -78,7 +86,7 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
           name="name"
           rules={[{ required: true, message: "Введите название билета" }]}
         >
-          <MyInput placeholder="Название билета" size="large" width="100%" />
+          <MyInput placeholder="Название билета" size="large" width="100%" disabled={hasPurchases} />
         </Form.Item>
 
         <Form.Item
@@ -98,7 +106,7 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
         >
           <MyInput
             type="number"
-            min={1}
+            min={ticket?.soldCount || 1}
             step={1}
             placeholder="Количество"
             size="large"
@@ -115,7 +123,7 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
               rules={[{ required: true, message: "Укажите дату начала" }]}
               style={{ width: "50%", marginBottom: 0 }}
             >
-              <MyDateTimePicker type="date" size="large" />
+              <MyDateTimePicker type="date" size="large" disabled={hasPurchases} />
             </Form.Item>
             <Form.Item
               label="Дата завершения"
@@ -134,7 +142,7 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
               rules={[{ required: true, message: "Укажите время начала" }]}
               style={{ width: "50%" }}
             >
-              <MyDateTimePicker type="time" size="large" />
+              <MyDateTimePicker type="time" size="large" disabled={hasPurchases} />
             </Form.Item>
             <Form.Item
               label="Время завершения"
@@ -148,7 +156,7 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
         </Flex>
 
         <Form.Item label="Описание" name="description">
-          <Input.TextArea rows={3} placeholder="Описание (необязательно)" />
+          <Input.TextArea rows={3} placeholder="Описание (необязательно)" disabled={hasPurchases} />
         </Form.Item>
 
         <Form.Item className="ticket-drawer__buttons">

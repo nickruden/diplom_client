@@ -5,11 +5,12 @@ import { useParams, Link } from 'react-router-dom';
 import { EyeOutlined, ArrowLeftOutlined, DownloadOutlined, EnvironmentOutlined, CalendarOutlined, FileTextOutlined, DollarOutlined } from '@ant-design/icons';
 import './EventDetailsPage.scss';
 import MyButton from '../../../../common/components/UI/Button/MyButton';
-import { useGetEventById } from '../../../../common/API/services/events/hooks.api';
+import { useGetEventById, useGetEventPuchases } from '../../../../common/API/services/events/hooks.api';
 import { editEventSteps } from '../../../EditEvent/heplers/evetSteps';
 import { formatDate, formatTimeRange } from '../../../../common/utils/Date/formatDate';
 import { useGetTicketsByEvent } from '../../../../common/API/services/tickets/hooks.api';
 import { LuTicketX } from "react-icons/lu";
+import { RiShoppingBasket2Line } from "react-icons/ri";
 
 
 const { Title, Text } = Typography;
@@ -47,8 +48,11 @@ const statusColors = {
 
 const EventDetailsPage = () => {
   const { id } = useParams();
-  const { data: eventData, isLoading: evetDataLoading } = useGetEventById(id);
+  const { data: eventData, isLoading: evetDataLoading, refetch: refetchEventData } = useGetEventById(id);
   const { data: ticketsData, isLoading: ticketsDataLoading } = useGetTicketsByEvent(id);
+  const { data: eventPuchasesData, isLoading: eventPuchasesLoading } = useGetEventPuchases(id);
+  console.log(eventData, eventPuchasesData);
+
 
   const ticketColumns = [
     { title: 'Название билета', dataIndex: 'name' },
@@ -64,11 +68,10 @@ const EventDetailsPage = () => {
 
   const orderColumns = [
     { title: 'Номер покупки', dataIndex: 'id' },
-    { title: 'Покупатель', dataIndex: 'buyer' },
-    { title: 'Билет', dataIndex: 'ticket' },
-    { title: 'Количество', dataIndex: 'tickets' },
-    { title: 'Сумма', dataIndex: 'amount', render: (amount) => `${amount} ₽` },
-    { title: 'Дата', dataIndex: 'date' },
+    { title: 'Покупатель', dataIndex: 'user', render: (user) => `${user.firstName} ${user.lastName}`},
+    { title: 'Билет', dataIndex: ['ticket', 'name'] },
+    { title: 'Сумма', dataIndex: ['ticket', 'price'], render: (price) => `${price} ₽`},
+    { title: 'Дата', dataIndex: 'purchaseTime', render: (date) => formatDate(date) },
   ];
 
   return (
@@ -82,6 +85,7 @@ const EventDetailsPage = () => {
         />
       }
       type="stats"
+      refetchEventData={refetchEventData}
     >
       <div className="eventDetailsPage">
         <div className="event-header-actions">
@@ -155,7 +159,7 @@ const EventDetailsPage = () => {
                   <Flex vertical>
                     <Text className="eventStats__title">Выручка</Text>
                     <Text className="eventStats__value">
-                      {eventDetails.stats.revenue} ₽
+                      {eventData.revenue} ₽
                     </Text>
                   </Flex>
                 </Flex>
@@ -166,7 +170,7 @@ const EventDetailsPage = () => {
                   <Flex vertical>
                     <Text className="eventStats__title">Продано билетов</Text>
                     <Text className="eventStats__value">
-                      {eventDetails.stats.ticketsSold}
+                      {eventData.totalSoldTickets}
                     </Text>
                   </Flex>
                 </Flex>
@@ -179,7 +183,7 @@ const EventDetailsPage = () => {
                       Просмотры объявления
                     </Text>
                     <Text className="eventStats__value">
-                      {eventDetails.stats.views}
+                      {eventData.viewsEvent}
                     </Text>
                   </Flex>
                 </Flex>
@@ -211,12 +215,20 @@ const EventDetailsPage = () => {
               <Title level={3} className="buyersTable__title">
                 Список покупок
               </Title>
+              {eventPuchasesLoading ? (
+                <MySkeleton width="100%" height="300px" />
+              ) : eventPuchasesData.length === 0 ? (
+                <MyEmpty
+                  title="Здесь пока нет покупок"
+                  image={<RiShoppingBasket2Line size={100} />}
+                />
+              ) :
               <Table
                 columns={orderColumns}
-                dataSource={eventDetails.orders}
+                dataSource={eventPuchasesData}
                 rowKey="id"
                 pagination={{ pageSize: 5 }}
-              />
+              />}
             </Flex>
           </>
         )}

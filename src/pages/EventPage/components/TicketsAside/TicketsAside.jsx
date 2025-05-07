@@ -7,7 +7,7 @@ import { MdOutlineReportGmailerrorred } from "react-icons/md";
 
 import { useCart } from "../../context/CartContext";
 
-import { MyEmpty } from "../../../../common/components";
+import { FavoriteButton, MyEmpty } from "../../../../common/components";
 import MyButton from "../../../../common/components/UI/Button/MyButton";
 
 import styles from "./TicketsAside.module.scss";
@@ -87,13 +87,7 @@ const TicketsAside = ({ userId, eventData, ticktesRef, ticketsData }) => {
                 gap="4px"
                 className={styles.actionButtons}
               >
-                <MyButton
-                  type="text"
-                  icon={<CiHeart />}
-                  className={styles.actionButton}
-                >
-                  Сохранить
-                </MyButton>
+                  <FavoriteButton size={10} eventId={eventData.id} title="Сохранить" className={styles.actionButton} style={{fontSize: 14}} /> 
                 <Divider type="vertical" />
                 <MyButton
                   type="text"

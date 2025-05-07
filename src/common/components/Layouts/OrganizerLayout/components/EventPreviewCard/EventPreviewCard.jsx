@@ -20,7 +20,7 @@ const statusColors = {
   Завершено: "gray",
 };
 
-const EventPreviewCard = ({ title, date, status = "Архив", previewLink }) => {
+const EventPreviewCard = ({ title, date, status = "Архив", previewLink, refetchEventData }) => {
   const navigate = useNavigate();
   const { id } = useParams();
     const [loadingEventId, setLoadingEventId] = useState(null);
@@ -35,6 +35,7 @@ const EventPreviewCard = ({ title, date, status = "Архив", previewLink }) =
         {
           onSettled: () => {
             setLoadingEventId(null);
+            refetchEventData?.();
           },
         }
       );

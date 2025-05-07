@@ -19,19 +19,18 @@ const EditEventPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { mutate: editEvent } = useEditEvent();
-  const { data: eventData, isLoading: eventDataLoader } = useGetEventById(id);
-  console.log(1)
+  const { mutateAsync: editEvent, isPending } = useEditEvent();
+  const { data: eventData, isLoading: eventDataLoader, refetch: refetchEventData } = useGetEventById(id);
 
   // хук работы с объектом формы мероприятия
   const { formData, handleInputChange, preparedData, formErrors, wasValidated, validateForm, generalError, isDirty } = useUpdateEventForm(eventData);
 
-  const handleSaveButton = () => {
-      const isValid = validateForm();
+  const handleSaveButton = async () => {
+    const isValid = validateForm();
 
-      if (!isValid) return message.error(generalError);
+    if (!isValid) return message.error("Не все данные заполнены!");
 
-    editEvent({id, data: preparedData});
+    await editEvent({id, data: preparedData});
     navigate(`/events/manage/edit/${id}/tickets`);
   };
 
@@ -50,12 +49,13 @@ const EditEventPage = () => {
           onStepClick={handleStepChange}
         />
       }
+      refetchEventData={refetchEventData}
     >
       <Flex vertical justify="space-between" className={styles.createEventPage}>
-        <div className={styles.formContent}>
+        <div className={styles.formContent} style={eventDataLoader || isPending ? {height: "100%"} : {}}>
           {eventDataLoader ? (
-            <MyLoader />
-          ) : (
+            <MyLoader styles={{height: "70vh"}} />
+          ) : isPending ? <MyLoader styles={{height: "70vh"}} title="Сохраняем..." /> : (
             <EventForm
               formData={formData}
               handleInputChange={handleInputChange}

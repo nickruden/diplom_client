@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { buyTickets, createTicket, deleteTicket, getTicketsByEvent, updateTicket } from "./endpoints";
+import { createTicket, deleteTicket, getMyTickets, getTicketsByEvent, updateTicket } from "./endpoints";
 
 export const useGetTicketsByEvent = (id) => {
   return useQuery({
@@ -19,7 +19,7 @@ export const useCreateTicket = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["get_all_event_tickets"],
-        exact: false, // можно true, если ключ точно совпадает, иначе false
+        exact: false,
       });
     },
   });
@@ -33,29 +33,25 @@ export const useUpdateTicket = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["get_all_event_tickets"],
-        exact: false, // можно true, если ключ точно совпадает, иначе false
-      });
-    },
-  });
-};
-
-export const useDeleteTicket = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id) => deleteTicket(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["get_all_event_tickets"],
         exact: false,
       });
     },
   });
 };
 
-export const useBuyTickets = () => {
+export const useDeleteTicket = () => {
   return useMutation({
-    mutationFn: (data) => buyTickets(data),
-    onSuccess: () => console.log("Вы купили билет!"),
+    mutationFn: (id) => deleteTicket(id),
+    onSuccess: () => console.log("билет удалился")
+  });
+};
+
+export const useGetMyTickets = () => {
+  return useQuery({
+    queryKey: ["get_my_tickets"],
+    queryFn: async () => { 
+      const data = await getMyTickets();
+      return data;
+    },
   });
 };
