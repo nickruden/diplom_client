@@ -24,18 +24,22 @@ const SearchInput = ({
   const [searchParams] = useSearchParams();
 
   const [value, setValue] = useState("");
+  const [wasInitializedFromURL, setWasInitializedFromURL] = useState(false);
 
-useEffect(() => {
-  console.log("useURLParams:", useURLParams);
-  if (useURLParams) {
-    const currentQuery = searchParams.get("search") || "";
-    setValue(currentQuery);
-  }
-}, [searchParams, useURLParams]);
+  useEffect(() => {
+    if (useURLParams && !wasInitializedFromURL) {
+      const currentQuery = searchParams.get("search") || "";
+      setValue(currentQuery);
+      setWasInitializedFromURL(true);
+    }
+  }, [searchParams, useURLParams, wasInitializedFromURL]);
 
   useEffect(() => {
     if (value === "") {
-      clearSearch();
+      // Если значение стер пользователь — очищаем
+      if (!useURLParams || wasInitializedFromURL) {
+        clearSearch();
+      }
     } else {
       onChange?.(value);
     }
