@@ -10,13 +10,25 @@ import { useGetEventByCategory, useGetEventsByCreator, useGetEvents } from "../.
 import { Flex } from "antd";
 import MySkeleton from "../../../../common/components/Skeleton/MySkeleton";
 import styles from "./EventList.module.scss";
+import { useSearchParams } from "react-router-dom";
 
 const EventList = ({ type = "main", slug = null, creatorId = null, filter = "upcoming"}) => {
+  const [searchParams] = useSearchParams();
+
+  const filters = {
+    type: searchParams.get('type'),
+    city: searchParams.get('city'),
+    date: searchParams.get('date'),
+    startDate: searchParams.get('startDate'),
+    endDate: searchParams.get('endDate'),
+    search: searchParams.get('search'),
+  };
+
   const { data: eventsData, isLoading } = slug
-    ? useGetEventByCategory(slug)
+    ? useGetEventByCategory(slug, filters)
     : creatorId
     ? useGetEventsByCreator(creatorId, filter)
-    : useGetEvents();
+    : useGetEvents(filters);
 
   if (isLoading) {
     return (

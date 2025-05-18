@@ -1,8 +1,6 @@
-// TicketsAside.jsx
 import React from "react";
 import { Affix, Card, Divider, Flex } from "antd";
 
-import { CiHeart } from "react-icons/ci";
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
 
 import { useCart } from "../../context/CartContext";
@@ -20,7 +18,7 @@ const TicketsAside = ({ userId, eventData, ticktesRef, ticketsData }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { ticketCounts, increment, decrement, openCart } = useCart();
+  const { ticketCounts, openCart } = useCart();
 
   const totalPrice = ticketsData.tickets.reduce(
     (acc, ticket) => acc + (ticket.price * (ticketCounts[ticket.id] || 0)),
@@ -43,7 +41,11 @@ const TicketsAside = ({ userId, eventData, ticktesRef, ticketsData }) => {
               />
             ))}
           </div> */}
-          {!ticketsData || ticketsData.length === 0 ? <MyEmpty title="Нет билетов"/> : ''}
+            {!ticketsData || ticketsData.length === 0 ? (
+              <MyEmpty title="Нет билетов" />
+            ) : (
+              ""
+            )}
             <Flex vertical gap="12px" className={styles.cardInfo}>
               <div className={styles.totalCount}>
                 Общая сумма: {totalPrice}₽
@@ -56,14 +58,21 @@ const TicketsAside = ({ userId, eventData, ticktesRef, ticketsData }) => {
                   className={styles.buyButton}
                   onClick={() => {
                     if (!user) {
-                      navigate(`/auth`)
-                    } else if (totalPrice > 0) {
-                      openCart();
+                      navigate(`/auth`);
                     } else {
-                      ticktesRef.current?.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                      });
+                      const hasTickets = Object.values(ticketCounts).some(
+                        (count) => count > 0
+                      );
+
+                      if (!hasTickets) {
+                        ticktesRef.current?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        });
+                        return;
+                      }
+
+                      openCart();
                     }
                   }}
                 >
@@ -87,7 +96,13 @@ const TicketsAside = ({ userId, eventData, ticktesRef, ticketsData }) => {
                 gap="4px"
                 className={styles.actionButtons}
               >
-                  <FavoriteButton size={10} eventId={eventData.id} title="Сохранить" className={styles.actionButton} style={{fontSize: 14}} /> 
+                <FavoriteButton
+                  size={10}
+                  eventId={eventData.id}
+                  title="Сохранить"
+                  className={styles.actionButton}
+                  style={{ fontSize: 14 }}
+                />
                 <Divider type="vertical" />
                 <MyButton
                   type="text"

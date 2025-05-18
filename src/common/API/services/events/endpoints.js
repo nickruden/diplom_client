@@ -15,8 +15,8 @@ export const getEventsByCreator = async (id, filter) => {
   return response.data;
 };
 
-export const getEventsByCategory = async (slug) => {
-  const response = await apiInstance.get(`/events/category/${slug}`);
+export const getEventsByCategory = async (slug, filters) => {
+  const response = await apiInstance.get(`/events/category/${slug}`, { params: filters });
   return response.data;
 };
 
@@ -30,8 +30,8 @@ export const updateEvent = async (id, data) => {
   return response.data;
 };
 
-export const delereEvent = async (id) => {
-  const response = await apiInstance.delete(`/events/delete/${id}`);
+export const deleteEvent = async (id, data) => {
+  const response = await apiInstance.delete(`/events/delete/${id}?realyDel=${data.realyDel}`);
   return response.data;
 };
 

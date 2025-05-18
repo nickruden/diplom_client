@@ -31,7 +31,7 @@ import { formatTime } from "../../../../common/utils/Date/formatDate";
 import { useEditEvent } from "../../../../common/API/services/events/hooks.api";
 
 
-const TicketsPage = ({refetchEventData}) => {
+const TicketsPage = ({refetchEventData, eventData}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingTicket, setEditingTicket] = useState(null);
 
@@ -44,6 +44,7 @@ const TicketsPage = ({refetchEventData}) => {
   const { mutateAsync: updateEvent } = useEditEvent();
 
   const handleSaveTicket = async (ticketData) => {
+    console.log(ticketData)
     try {
       if (editingTicket) {
         updateTicket({ id: ticketData.id, data: ticketData });
@@ -70,12 +71,6 @@ const TicketsPage = ({refetchEventData}) => {
           title: 'Ошибка удаления',
           content: 'Невозможно удалить билет. Есть люди купившие его! Если хотите чтобы билет больше не продавался, уменьшите общее количество этого билета до количества купленных!',
           okText: 'Понятно',
-        });
-      } else {
-        Modal.error({
-          title: 'Ошибка',
-          content: 'Не удалось удалить билет',
-          okText: 'Закрыть',
         });
       }
     }
@@ -137,13 +132,13 @@ const TicketsPage = ({refetchEventData}) => {
                     <Title level={5} className={styles.title}>
                       {ticket.name}
                     </Title>
-                    <Text type="secondary">
+                    {/* <Text type="secondary">
                       <span style={{ color: "green", fontWeight: 600 }}>
                         {" "}
                         В продаже
                       </span>{" "}
                       • до {formatTime(ticket.salesEnd)}
-                    </Text>
+                    </Text> */}
                   </Col>
                   <Col span={4}>
                     <Text>
@@ -193,6 +188,7 @@ const TicketsPage = ({refetchEventData}) => {
         onClose={() => setDrawerOpen(false)}
         onSubmit={handleSaveTicket}
         ticket={editingTicket}
+        event={eventData}
       />
     </div>
   );

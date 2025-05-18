@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import dayjs from "dayjs";
-import { formatDate } from "../../../common/utils/Date/formatDate";
+import { formatDate, normalizeToUtcWithoutOffset } from "../../../common/utils/Date/formatDate";
 
 const combineDateTime = (date, time) => {
   if (!date || !time) return null;
@@ -19,7 +19,10 @@ export const useUpdateEventForm = (initialData = null) => {
     startTime: null,
     endTime: null,
     multiDay: false,
-    locationType: "online",
+    locationType: "offline",
+    onlineLink: "",
+    onlinePassword: "",
+    onlineInstructions: "",
     address: "",
     description: "",
     isPrime: false,
@@ -30,22 +33,32 @@ export const useUpdateEventForm = (initialData = null) => {
 
   useEffect(() => {
     if (initialData) {
+      const onlineInfo = initialData?.onlineInfo ? JSON.parse(initialData.onlineInfo) : {};
+
       setFormData({
         images: initialData.images || [],
         category: initialData.categoryId || "",
         title: initialData.name || "",
-        startDate: dayjs(initialData.startTime),
-        endDate: dayjs(initialData.endTime),
-        startTime: dayjs(initialData.startTime),
-        endTime: dayjs(initialData.endTime),
-        multiDay: (formatDate(initialData.startTime) != formatDate(initialData.endTime)) ? "checked" : false,
+        startDate: normalizeToUtcWithoutOffset(dayjs(initialData.startTime)),
+        endDate: normalizeToUtcWithoutOffset(dayjs(initialData.endTime)),
+        startTime: normalizeToUtcWithoutOffset(dayjs(initialData.startTime)),
+        endTime: normalizeToUtcWithoutOffset(dayjs(initialData.endTime)),
+        multiDay:
+          formatDate(initialData.startTime) != formatDate(initialData.endTime)
+            ? "checked"
+            : false,
         locationType: initialData.location === "Онлайн" ? "online" : "offline",
+        onlineLink: onlineInfo.link || "",
+        onlinePassword: onlineInfo.password || "",
+        onlineInstructions: onlineInfo.instructions || "",
         address: initialData.location !== "Онлайн" ? initialData.location : "",
         description: initialData.description || "",
         isPrime: initialData.isPrime || false,
-        refundDate: initialData?.refundDate ? dayjs(initialData.refundDate) : null,
+        refundDate: initialData?.refundDate
+          ? dayjs(initialData.refundDate)
+          : null,
         isAutoRefund: initialData?.isAutoRefund ?? false,
-        status: initialData?.status || 'Архив',
+        status: initialData?.status || "Архив",
       });
     }
   }, [initialData]);
@@ -84,6 +97,8 @@ export const useUpdateEventForm = (initialData = null) => {
     if (formData.locationType === "offline" && !formData.address)
       errors.address = true;
     if (!formData.description) errors.description = true;
+    if (formData.locationType === "online" && !formData.onlineLink)
+  errors.onlineLink = true;
 
     const isValid = Object.keys(errors).length === 0;
     setFormErrors(errors);
@@ -101,19 +116,34 @@ export const useUpdateEventForm = (initialData = null) => {
     }
   }, [formData.locationType, formData.address]);
 
-  const preparedData = useMemo(() => ({
-    images: formData.images,
-    categoryId: formData.category,
-    title: formData.title,
-    description: formData.description,
-    startTime: combineDateTime(formData.startDate, formData.startTime),
-    endTime: combineDateTime(formData.endDate || formData.startDate, formData.endTime),
-    location: formData.locationType === "online" ? "Онлайн" : formData.address,
-    isPrime: formData.isPrime,
-    refundDate: dayjs(formData.refundDate || new Date()).toISOString(),
-    isAutoRefund: formData.isAutoRefund ? 1 : 0,
-    status: formData.status,
-  }), [formData]);
+  const preparedData = useMemo(
+    () => ({
+      images: formData.images,
+      categoryId: formData.category,
+      title: formData.title,
+      description: formData.description,
+      startTime: combineDateTime(formData.startDate, formData.startTime),
+      endTime: combineDateTime(
+        formData.endDate || formData.startDate,
+        formData.endTime
+      ),
+      location:
+        formData.locationType === "online" ? "Онлайн" : formData.address,
+      isPrime: formData.isPrime,
+      refundDate: dayjs(formData.refundDate || new Date()).toISOString(),
+      isAutoRefund: formData.isAutoRefund ? 1 : 0,
+      status: formData.status,
+      onlineInfo:
+        formData.locationType === "online"
+          ? JSON.stringify({
+              link: formData.onlineLink,
+              password: formData.onlinePassword,
+              instructions: formData.onlineInstructions,
+            })
+          : null,
+    }),
+    [formData]
+  );
 
   return {
     formData,

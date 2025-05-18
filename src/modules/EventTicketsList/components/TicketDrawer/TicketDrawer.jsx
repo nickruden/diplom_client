@@ -11,7 +11,6 @@ const { Title } = Typography;
 const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
   const [form] = Form.useForm();
   const [hasPurchases, setHasPurchases] = useState(false);
-  console.log(ticket)
 
   // Устанавливаем значения при открытии
   useEffect(() => {
@@ -23,8 +22,8 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
         price: ticket.price,
         count: ticket.count,
         description: ticket.description,
-        dateStart: start.startOf("day"),
-        dateEnd: end.startOf("day"),
+        // dateStart: start.startOf("day"),
+        // dateEnd: end.startOf("day"),
         timeStart: start,
         timeEnd: end,
       });
@@ -36,6 +35,7 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
       }
     } else {
       form.resetFields();
+      setHasPurchases(false);
     }
   }, [ticket, open]);
 
@@ -54,8 +54,8 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
       description: values.description,
       price: Number(values.price),
       count: Number(values.count),
-      salesStart: formatDateTime(dateStart, timeStart),
-      salesEnd: formatDateTime(dateEnd, timeEnd),
+      // salesStart: formatDateTime(dateStart, timeStart),
+      // salesEnd: formatDateTime(dateEnd, timeEnd),
     };
   
     onSubmit(preparedData);
@@ -95,7 +95,7 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
           rules={[{ required: true, message: "Введите цену билета" }]}
         >
           <MyInput type="number"
-            min={1}
+            min={0}
             step={1} placeholder="Цена" size="large" width="100%" />
         </Form.Item>
 
@@ -114,7 +114,7 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
           />
         </Form.Item>
 
-        <Flex vertical gap={10} className="sales-date">
+        {/* <Flex vertical gap={10} className="sales-date">
           <Title level={5}>Начало продаж</Title>
           <Flex justify="space-between" gap={10}>
             <Form.Item
@@ -153,7 +153,7 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket }) => {
               <MyDateTimePicker type="time" size="large" />
             </Form.Item>
           </Flex>
-        </Flex>
+        </Flex> */}
 
         <Form.Item label="Описание" name="description">
           <Input.TextArea rows={3} placeholder="Описание (необязательно)" disabled={hasPurchases} />

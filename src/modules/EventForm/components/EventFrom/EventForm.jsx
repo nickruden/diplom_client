@@ -1,6 +1,3 @@
-import React from "react";
-import { YMaps, Map, Placemark } from "@pbe/react-yandex-maps";
-
 import { Form, Typography, Flex, Divider } from "antd";
 const { Title, Text } = Typography;
 
@@ -12,16 +9,14 @@ import imageBlockBgImage from '../../../../assets/pages/event-info/image-block/b
 
 import { useGetCategory } from "../../../../common/API/services/categories/hooks.api";
 
-import SearchInput from "../../../../common/components/UI/Search/Search";
 import MyInput from "../../../../common/components/UI/Input/MyInput";
 import MySelect from "../../../../common/components/UI/MySelect/MySelect";
 import MySwitch from "../../../../common/components/UI/Switch/MySwitch";
 import MySegmented from "../../../../common/components/UI/Segmented/MuSegmented";
 import MyDateTimePicker from '../../../../common/components/UI/DatePicker/MyDatePicker'
 
-import { MySkeleton, TextEditor, ImageUploader, MyLocationMap  } from "../../../../common/components";
+import { MySkeleton, TextEditor, ImageUploader } from "../../../../common/components";
 
-// этот импорт не правильный с точки зрения архитектуры модульности
 import { BigBanner } from '../../../BigBanner';
 
 import styles from './EventForm.module.scss'
@@ -33,7 +28,6 @@ const EventInfo = ({formData, handleInputChange, formErrors, wasValidated}) => {
   const { mutate: deleteImage } = useDeleteImage();
 
   const handleDeleteImage = async (img) => {
-    console.log(img.publicId)
     deleteImage({publicId: img.publicId});
   };
 
@@ -198,6 +192,7 @@ const EventInfo = ({formData, handleInputChange, formErrors, wasValidated}) => {
           </Flex>
 
           <Flex
+          id="eventDate"
             gap={20}
             style={{ maxWidth: "800px" }}
             className={`${styles.formBlock} ${
@@ -358,13 +353,68 @@ const EventInfo = ({formData, handleInputChange, formErrors, wasValidated}) => {
                 {formData.locationType === "offline" && (
                     <MyInput
                       value={formData.address}
-                      placeholder="Введите название мероприятия"
+                      placeholder="Введите полный адресс или узнаваемое название"
                       size="large"
                       onChange={(e) =>
                         handleInputChange("address", e.target.value)
                       }
                     />
                 )}
+                {formData.locationType === "online" && (
+  <Flex
+    vertical
+    style={{ maxWidth: "800px" }}
+    className={`${styles.formBlock} ${
+      formErrors.onlineLink
+        ? styles.validateError
+        : formData.onlineLink
+        ? styles.validateSuccess
+        : ""
+    }`}
+  >
+    <Flex gap={20} className={styles.header}>
+      <Flex vertical>
+        <Text className={styles.description}>
+          Укажите ссылку для подключения и дополнительные сведения
+        </Text>
+      </Flex>
+    </Flex>
+    <Flex vertical gap={20}>
+    <Form.Item
+      className={styles.input}
+      validateStatus={
+        formErrors.onlineLink ? "error" : formData.onlineLink ? "success" : ""
+      }
+      help={formErrors.onlineLink && "Ссылка обязательна для онлайн события"}
+    >
+      <MyInput
+        value={formData.onlineLink}
+        onChange={(e) => handleInputChange("onlineLink", e.target.value)}
+        placeholder="https://zoom.us/..."
+        size="large"
+      />
+    </Form.Item>
+
+    <Form.Item className={styles.input}>
+      <MyInput
+        value={formData.onlinePassword}
+        onChange={(e) => handleInputChange("onlinePassword", e.target.value)}
+        placeholder="Пароль (если есть)"
+        size="large"
+      />
+    </Form.Item>
+
+    <Form.Item className={styles.input}>
+      <TextEditor
+        value={formData.onlineInstructions}
+        onChange={(val) => handleInputChange("onlineInstructions", val)}
+        theme="snow"
+        placeholder="Опишите главные инструкции, чтобы пользователь не потерялся"
+      />
+    </Form.Item>
+    </Flex>
+  </Flex>
+)}
               </Form.Item>
             </Flex>
           </Flex>

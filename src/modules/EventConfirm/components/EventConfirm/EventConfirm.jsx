@@ -114,8 +114,7 @@
               </div>
               <Flex align="center" gap={10} style={{ fontSize: 18 }}>
                 <MdAccessTime size={20} />{" "}
-                {calculateDuration(eventData.startTime, eventData.endTime)}{" "}
-                часа(ов)
+                {calculateDuration(eventData.startTime, eventData.endTime)}
               </Flex>
             </Flex>
           </Flex>
@@ -173,13 +172,13 @@
                     />
 
                     <Text style={{ color: "red" }}>
-                      Люди смогут вернуть билеты до{" "}
+                      Люди смогут вернуть билеты до {" "}
                       {dayjs(eventData.endTime)
                         .subtract(refundDays, "day")
                         .format("DD.MM.YYYY")}
                     </Text>
                   </Flex>
-                  <Flex vertical>
+                  {/* <Flex vertical>
                     <MySwitch
                       title="Автоматически подтверждать возвраты"
                       checked={autoConfirmRefund}
@@ -193,7 +192,7 @@
                         (иначе обработка происходит вручную)
                       </Text>
                     </Text>
-                  </Flex>
+                  </Flex> */}
                 </Flex>
               )}
             </Flex>

@@ -20,7 +20,6 @@ const CreateEventPage = () => {
   const { mutate: createEvent } = useCreateEvent();
 
   const handleNext = () => {
-
     if (currentStep === 0) {
       const isValid = validateForm();
 
@@ -39,6 +38,8 @@ const CreateEventPage = () => {
     wasValidated,
     validateForm
   } = useCreateEventForm();
+
+  console.log(preparedData)
 
   const steps = [
     {

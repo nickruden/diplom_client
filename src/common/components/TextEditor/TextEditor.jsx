@@ -4,13 +4,13 @@ import 'react-quill/dist/quill.snow.css';
 
 import './TextEditor.scss'
 
-const TextEditor = ({ value, onChange, theme, ...props }) => {
+const TextEditor = ({ value, onChange, theme, placeholder='Введите текст', ...props }) => {
   return (
     <ReactQuill
       value={value}
       onChange={onChange}
       theme={theme}
-      placeholder='Введите текст'
+      placeholder={placeholder}
       className="textEditorComponent"
       {...props}
     />

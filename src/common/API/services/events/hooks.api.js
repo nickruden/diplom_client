@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAllEvents, getEventsByCreator, getEventById, getEventsByCategory, createEvent, updateEvent, delereEvent, deleteImage, getFavoriteEventsInfo, unsetFavoriteEvent, favoritedEvent, getMyFavoriteEvents, getEventPuchases } from "./endpoints";
+import { getAllEvents, getEventsByCreator, getEventById, getEventsByCategory, createEvent, updateEvent, deleteImage, getFavoriteEventsInfo, unsetFavoriteEvent, favoritedEvent, getMyFavoriteEvents, getEventPuchases, deleteEvent } from "./endpoints";
 import { updateEventCount } from "../../../store/slices/user.slice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -7,7 +7,7 @@ import { addFavoriteEvent, removeFavoriteEvent, setFavoriteEvent } from "../../.
 
 export const useGetEvents = (filters = {}) => {
   return useQuery({
-    queryKey: ["get_all_evetns", filters],
+    queryKey: ["get_all_events", filters],
     queryFn: () => getAllEvents(filters),
   });
 };
@@ -26,10 +26,10 @@ export const useGetEventsByCreator = (id, filter) => {
   });
 };
 
-export const useGetEventByCategory = (slug) => {
+export const useGetEventByCategory = (slug, filters = {}) => {
   return useQuery({
-    queryKey: ["get_event_by_category", slug],
-    queryFn: () => getEventsByCategory(slug),
+    queryKey: ["get_event_by_category", slug, filters],
+    queryFn: () => getEventsByCategory(slug, filters),
   });
 };
 
@@ -65,7 +65,7 @@ export const useDeleteEvent = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id) => delereEvent(id),
+    mutationFn: ({id, data}) => deleteEvent(id, data),
     onSuccess: (data) => {
       dispatch(updateEventCount(data.eventCount));
       queryClient.invalidateQueries({

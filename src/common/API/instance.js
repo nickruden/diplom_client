@@ -37,8 +37,6 @@ apiInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    console.log('Этот запрос, начинает обновление токенов:', error.config.url, error.response?.status);
-
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 

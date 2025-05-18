@@ -1,19 +1,30 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { List } from 'antd';
-import { useDispatch } from 'react-redux';
-// import { markAsRead } from '../store/notifications.slice';
+
+import styles from './NotificationItem.module.scss';
+
 
 const NotificationItem = ({ notification }) => {
-//   const dispatch = useDispatch();
-
-//   const handleClick = () => {
-//     dispatch(markAsRead(notification.id));
-//   };
+  console.log(notification)
+  const navigate = useNavigate();
 
   return (
-    <List.Item style={{ cursor: 'pointer', background: notification.read ? '#fff' : '#f6f6f6' }}>
+    <List.Item
+      onClick={() => navigate(`/event/${notification.eventId}`)}
+      className={`${styles.notificationItem} ${notification.isRead ? styles.read : ''}`}
+    >
       <List.Item.Meta
-        title={notification.title}
-        description={notification.time}
+        title={<span className={styles.title}>{notification.title}</span>}
+        description={
+          <>
+            <div className={styles.message}>{notification.message}</div>
+            <div className={styles.time}>
+              {new Date(notification.createdAt).toLocaleString()}
+            </div>
+          </>
+        }
       />
     </List.Item>
   );

@@ -55,8 +55,6 @@ const CartModal = ({ tickets, eventData }) => {
   );
   const finalTotal = total;
 
-
-  // инициализация виджета оплаты
   useEffect(() => {
     const scriptId = "yookassa-checkout";
     if (!document.getElementById(scriptId)) {
@@ -89,32 +87,49 @@ const CartModal = ({ tickets, eventData }) => {
         const ticketsToBuy = selectedTickets.map((ticket) => ({
           idTicket: ticket.id,
           count: ticketCounts[ticket.id],
+          price: ticket.price,
         }));
 
         await confirmPayment({idBuyer: user.id, tickets: ticketsToBuy});
 
     
-        // // 3. Через 2-3 секунды редирект
-        // setTimeout(() => {
-        //   window.location.href = `${window.location.origin}/payment-success`;
-        // }, 2500);
+        // 3. Через 2-3 секунды редирект
+        setTimeout(() => {
+          window.location.href = `${window.location.origin}/my-tickets`;
+        }, 1000);
       });
     });
     
   }, [confirmationToken]);
 
-  const handlePay = async () => {
-    try {
-      const data = {
-        amount: finalTotal,
-      };
-      const payment = await createPeyment(data);
-      setConfirmationToken(payment.confirmation.confirmation_token);
-    } catch (error) {
-      console.error(error);
-      message.error("Ошибка при создании платежа");
+const handlePay = async () => {
+  try {
+    const ticketsToBuy = selectedTickets.map((ticket) => ({
+      idTicket: ticket.id,
+      count: ticketCounts[ticket.id],
+      price: ticket.price,
+    }));
+
+    if (finalTotal === 0) {
+      await confirmPayment({ idBuyer: user.id, tickets: ticketsToBuy });
+      message.success("Билеты успешно оформлены!");
+
+      setTimeout(() => {
+        window.location.href = `${window.location.origin}/my-tickets`;
+      }, 1000);
+
+      return;
     }
-  };
+
+    const data = { amount: finalTotal };
+    const payment = await createPeyment(data);
+    setConfirmationToken(payment.confirmation.confirmation_token);
+  } catch (error) {
+    console.error(error);
+    message.error("Ошибка при оформлении");
+  }
+};
+
 
   const handleCancel = async () => {
       setConfirmationToken(null);
@@ -187,7 +202,10 @@ const CartModal = ({ tickets, eventData }) => {
             </Title>
             <Divider style={{ margin: "15px 0px" }} />
             {!confirmationToken ? (
-              <MyEmpty title="После подтверждения оплаты тут появится виджет" image={<MdOutlinePayment size={120} />} />
+              <MyEmpty
+                title="После подтверждения оплаты тут появится виджет"
+                image={<MdOutlinePayment size={120} />}
+              />
             ) : (
               <Flex vertical className={styles.paymentWidget}>
                 <div id="payment-form"></div>
@@ -260,10 +278,9 @@ const CartModal = ({ tickets, eventData }) => {
                   type="primary"
                   bgColor="green"
                   onClick={handlePay}
-                  block
-                  disabled={!!confirmationToken} 
+                  disabled={!!confirmationToken}
                 >
-                  Перейти к оплате
+                  {finalTotal === 0 ? "Получить билеты" : "Перейти к оплате"}
                 </MyButton>
               </Flex>
             </div>

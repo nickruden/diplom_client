@@ -38,6 +38,7 @@ const SelectCity = () => {
   const handleChange = (value) => {
     setSelectedCity(value);
     setSearchValue('');
+    if (onChange) onChange(value);
   };
 
   return (

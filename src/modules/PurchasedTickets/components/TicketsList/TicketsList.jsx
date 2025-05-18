@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Typography, Space, Flex, Tabs, Select } from "antd";
 import styles from "./TicketsList.module.scss";
 import TicketCard from "../TicketCard/TicketCard";
@@ -15,13 +15,23 @@ import MySegmented from "../../../../common/components/UI/Segmented/MuSegmented"
 const { Title } = Typography;
 
 const TicketsList = () => {
+  const [viewMode, setViewMode] = useState("list");
+
   const {
     data: ticketsData,
     isLoading: ticketsDataLoading,
     refetch: refetchPurchase,
     error: ticketsDataErrorLoading,
   } = useGetMyTickets();
-  console.log(ticketsData);
+
+  const filteredTickets = ticketsData
+  ?.filter((ticket) => {
+    if (viewMode === "list" && ticket.eventInfo.location === "Онлайн") return false;
+    if (viewMode === "calendar" && ticket.eventInfo.location !== "Онлайн") return false;
+
+    return true;
+  });
+
 
   return (
     <div className={styles.ticketsPage}>
@@ -63,34 +73,8 @@ const TicketsList = () => {
                 },
               ]}
             />
-            <Flex
-              align="center"
-              gap={16}
-              className={styles.filters}
-            >
-              <Flex align="center" gap={30}>
-                <SearchInput
-                  placeholder="Поиск по названию"
-                  onPressEnter={(e) => setSearchTerm(e.target.value)}
-                  allowClear="true"
-                  size="large"
-                  borderRadius="100px"
-                  imgSize="20"
-                />
-                <MySegmented
-                  options={[
-                    { label: "Все", value: "all" },
-                    { label: "Ближайшие", value: "soon" },
-                  ]}
-                  value="all"
-                  onChange={(value) => handleInputChange("locationType", value)}
-                  size="large"
-                  style={{ marginBottom: 0 }}
-                />
-              </Flex>
-            </Flex>
             <Flex vertical gap={50} style={{ width: "100%" }}>
-              {ticketsData.map((ticket) => (
+              {filteredTickets.map((ticket) => (
                 <TicketCard purchase={ticket} refetchPurchase={refetchPurchase} />
               ))}
             </Flex>

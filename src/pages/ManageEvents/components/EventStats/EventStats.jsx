@@ -1,42 +1,56 @@
-import React, { useState } from 'react';
-import { Card, Typography, Row, Col, Divider, Table, Button, Space, Statistic, Tooltip, Flex, Tag } from 'antd';
-import { AppLayout, MyEmpty, MyLoader, MySkeleton, MySteps, OrganizerLayout } from '../../../../common/components';
-import { useParams, Link } from 'react-router-dom';
-import { EyeOutlined, ArrowLeftOutlined, DownloadOutlined, EnvironmentOutlined, CalendarOutlined, FileTextOutlined, DollarOutlined } from '@ant-design/icons';
-import './EventDetailsPage.scss';
-import MyButton from '../../../../common/components/UI/Button/MyButton';
-import { useGetEventById, useGetEventPuchases } from '../../../../common/API/services/events/hooks.api';
-import { editEventSteps } from '../../../EditEvent/heplers/evetSteps';
-import { formatDate, formatTimeRange } from '../../../../common/utils/Date/formatDate';
-import { useGetTicketsByEvent } from '../../../../common/API/services/tickets/hooks.api';
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Card,
+  Typography,
+  Row,
+  Col,
+  Divider,
+  Table,
+  Button,
+  Space,
+  Statistic,
+  Tooltip,
+  Flex,
+  Tag,
+  message,
+  Modal,
+} from "antd";
+import {
+  AppLayout,
+  MyEmpty,
+  MyLoader,
+  MySkeleton,
+  MySteps,
+  OrganizerLayout,
+} from "../../../../common/components";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
+import {
+  EyeOutlined,
+  ArrowLeftOutlined,
+  DownloadOutlined,
+  EnvironmentOutlined,
+  CalendarOutlined,
+  FileTextOutlined,
+  DollarOutlined,
+} from "@ant-design/icons";
+import "./EventDetailsPage.scss";
+import MyButton from "../../../../common/components/UI/Button/MyButton";
+import {
+  useDeleteEvent,
+  useGetEventById,
+  useGetEventPuchases,
+} from "../../../../common/API/services/events/hooks.api";
+import { editEventSteps } from "../../../EditEvent/heplers/evetSteps";
+import {
+  formatDate,
+  formatTimeRange,
+} from "../../../../common/utils/Date/formatDate";
+import { useGetTicketsByEvent } from "../../../../common/API/services/tickets/hooks.api";
 import { LuTicketX } from "react-icons/lu";
 import { RiShoppingBasket2Line } from "react-icons/ri";
-
+import { downloadCSV } from "../../utils/downloadOrders";
 
 const { Title, Text } = Typography;
-
-const eventDetails = {
-  id: '1',
-  name: 'Tech Conference 2025',
-  date: '2025-06-15',
-  createdAt: '2025-06-01',
-  url: 'https://yourplatform.com/event/1',
-  location: 'Москва, Россия',
-  status: 'Активно',
-  stats: {
-    revenue: 12340,
-    ticketsSold: 234,
-    views: 1987,
-  },
-  tickets: [
-    { name: 'Standard', sold: 120, total: 150, price: 25 },
-    { name: 'VIP', sold: 40, total: 50, price: 100 },
-  ],
-  orders: [
-    { id: 'ORD123', buyer: 'Ivan Petrov', tickets: 2, amount: 50, date: '2025-04-10' },
-    { id: 'ORD124', buyer: 'Anna Ivanova', tickets: 1, amount: 100, date: '2025-04-12' },
-  ]
-};
 
 const statusColors = {
   Опубликовано: "green",
@@ -45,33 +59,89 @@ const statusColors = {
   Завершено: "gray",
 };
 
-
 const EventDetailsPage = () => {
   const { id } = useParams();
-  const { data: eventData, isLoading: evetDataLoading, refetch: refetchEventData } = useGetEventById(id);
-  const { data: ticketsData, isLoading: ticketsDataLoading } = useGetTicketsByEvent(id);
-  const { data: eventPuchasesData, isLoading: eventPuchasesLoading } = useGetEventPuchases(id);
-  console.log(eventData, eventPuchasesData);
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  const {
+    data: eventData,
+    isLoading: evetDataLoading,
+    refetch: refetchEventData,
+  } = useGetEventById(id);
+  const { data: ticketsData, isLoading: ticketsDataLoading } =
+    useGetTicketsByEvent(id);
+  const { data: eventPuchasesData, isLoading: eventPuchasesLoading } =
+    useGetEventPuchases(id);
+  const { mutateAsync: deleteEvent } = useDeleteEvent();
+  const hasModalShownRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      location.search.includes("action=delete") &&
+      !hasModalShownRef.current
+    ) {
+      hasModalShownRef.current = true;
+      handleDeleteWithRefunds();
+    }
+  }, []);
+
+  const handleDeleteWithRefunds = async () => {
+    Modal.confirm({
+      title: "Подтверждение удаления",
+      content: (
+        <div>
+          <p>Вы точно хотите удалить событие?</p>
+          <p style={{ color: "red" }}>
+            Все средства будут возвращены покупателям!
+          </p>
+        </div>
+      ),
+      okText: "Удалить",
+      cancelText: "Отмена",
+      onOk: async () => {
+        try {
+          await deleteEvent({ id: id, data: { realyDel: true } });
+          navigate("/events/manage/my-events");
+          message.success("Событие удалено, средства возвращены");
+        } catch (error) {
+          message.error("Ошибка при удалении");
+          console.error(error);
+        }
+      },
+    });
+  };
 
   const ticketColumns = [
-    { title: 'Название билета', dataIndex: 'name' },
+    { title: "Название билета", dataIndex: "name" },
     {
-      title: 'Продано',
-      dataIndex: 'soldCount',
+      title: "Продано",
+      dataIndex: "soldCount",
       render: (soldCount, record) => {
         return `${soldCount} / ${record.count}`;
       },
     },
-    { title: 'Цена', dataIndex: 'price', render: (price) => `${price} ₽` },
+    { title: "Цена", dataIndex: "price", render: (price) => `${price} ₽` },
   ];
 
   const orderColumns = [
-    { title: 'Номер покупки', dataIndex: 'id' },
-    { title: 'Покупатель', dataIndex: 'user', render: (user) => `${user.firstName} ${user.lastName}`},
-    { title: 'Билет', dataIndex: ['ticket', 'name'] },
-    { title: 'Сумма', dataIndex: ['ticket', 'price'], render: (price) => `${price} ₽`},
-    { title: 'Дата', dataIndex: 'purchaseTime', render: (date) => formatDate(date) },
+    { title: "Номер покупки", dataIndex: "id" },
+    {
+      title: "Покупатель",
+      dataIndex: "user",
+      render: (user) => `${user.firstName} ${user.lastName}`,
+    },
+    { title: "Билет", dataIndex: ["ticket", "name"] },
+    {
+      title: "Сумма",
+      dataIndex: ["ticket", "price"],
+      render: (price) => `${price} ₽`,
+    },
+    {
+      title: "Дата",
+      dataIndex: "purchaseTime",
+      render: (date) => formatDate(date),
+    },
   ];
 
   return (
@@ -95,7 +165,12 @@ const EventDetailsPage = () => {
                 Все мероприятия
               </MyButton>
             </Link>
-            <MyButton icon={<DownloadOutlined />} type="default" size="medium">
+            <MyButton
+              icon={<DownloadOutlined />}
+              type="default"
+              size="medium"
+              onClick={() => downloadCSV(eventPuchasesData, eventData)}
+            >
               Сохранить список купленных билетов
             </MyButton>
           </Space>
@@ -140,7 +215,7 @@ const EventDetailsPage = () => {
                   </Flex>
                 </div>
                 <div className="eventInfoCard__status">
-                  <Tooltip title={eventDetails.status}>
+                  <Tooltip title={eventData.status}>
                     <Tag
                       color={statusColors[eventData.status] || "default"}
                       className="statusTag"
@@ -222,13 +297,14 @@ const EventDetailsPage = () => {
                   title="Здесь пока нет покупок"
                   image={<RiShoppingBasket2Line size={100} />}
                 />
-              ) :
-              <Table
-                columns={orderColumns}
-                dataSource={eventPuchasesData}
-                rowKey="id"
-                pagination={{ pageSize: 5 }}
-              />}
+              ) : (
+                <Table
+                  columns={orderColumns}
+                  dataSource={eventPuchasesData}
+                  rowKey="id"
+                  pagination={{ pageSize: 5 }}
+                />
+              )}
             </Flex>
           </>
         )}

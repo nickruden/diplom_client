@@ -55,19 +55,14 @@ export const EventPage = () => {
 
   useEffect(() => {
     if (eventSuccess && user.id !== eventData?.organizerId) {
-      console.log(eventData);
-      console.log(eventSuccess)
       const updatedViews = Number(eventData.viewsEvent) + 1;
-      console.log(eventData.viewsEvent)
-      console.log(1, updatedViews)
       
-      // Отправляем запрос на сервер
       updateEventViews({
         id: id, 
         data: { viewsEvent: updatedViews }
       });
     }
-  }, []);
+  }, [eventSuccess]);
 
   return (
     <AppLayout>
@@ -78,7 +73,10 @@ export const EventPage = () => {
           title="Данные потерялись, но мы обязательно их найдём"
           image={<FaRegSadTear size={120} />}
         />
-      ) : (
+      ) : eventData.status === "Черновик" ? <MyEmpty
+          title="Пользователь снял с публикации данное мероприятие"
+          image={<FaRegSadTear size={120} />}
+        /> : (
         <>
           <BigBanner data={eventData.images} type="eventPage" />
           <div className={styles.eventDetails}>
@@ -144,7 +142,7 @@ export const EventPage = () => {
                       {" "}
                       <FaRegCalendarAlt />
                       {formatTimeRange(eventData.startTime, eventData.endTime, {
-                        showWeekday: true,
+                        showWeekday: true, noNormalize: true,
                       })}
                     </Flex>
                     <Flex
@@ -201,9 +199,10 @@ export const EventPage = () => {
                       <FaMapLocationDot />
                       {eventData.location}
                     </Flex>
+                    {eventData.location === "Онлайн" ? '' : 
                     <div className={styles.locationMap}>
                       <MyLocationMap location={eventData.location} height="400px" />
-                    </div>
+                    </div>}
                   </Flex>
                 </div>
                 <div className={styles.description}>

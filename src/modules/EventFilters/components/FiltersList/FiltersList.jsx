@@ -22,43 +22,91 @@ const FiltersList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [dates, setDates] = useState([]);
 
-  const activeFilter = searchParams.get('type') || 'all';
-  const activeDateFilter = searchParams.get('date') || 'all';
+  const activeFilter = searchParams.get("type") || "all";
+
+  // Функция получения выходных
+  const getWeekendRange = () => {
+    const today = dayjs();
+    const dayOfWeek = today.day();
+
+    const saturday = dayOfWeek <= 6 ? today.add(6 - dayOfWeek, "day") : today;
+    const sunday = saturday.add(1, "day");
+
+    return [saturday, sunday];
+  };
 
   const handleTabChange = (key) => {
     const newParams = new URLSearchParams(searchParams);
-    newParams.set('type', key);
+
+    const today = dayjs();
+
+    if (key === "today") {
+      newParams.set("type", key);
+      newParams.set("startDate", today.format("YYYY-MM-DD"));
+      newParams.set("endDate", today.format("YYYY-MM-DD"));
+      setDates([today, today]);
+    } else if (key === "weekend") {
+      const [start, end] = getWeekendRange();
+      newParams.set("type", key);
+      newParams.set("startDate", start.format("YYYY-MM-DD"));
+      newParams.set("endDate", end.format("YYYY-MM-DD"));
+      setDates([start, end]);
+    } else {
+      newParams.set("type", key);
+      newParams.delete("date");
+      newParams.delete("startDate");
+      newParams.delete("endDate");
+      setDates([]);
+    }
+
     setSearchParams(newParams);
   };
 
   const handleDateChange = (dates) => {
     const newParams = new URLSearchParams(searchParams);
-    if (dates && dates.length === 2) {
-      newParams.set('date', 'custom');
-      newParams.set('startDate', dates[0].format('YYYY-MM-DD'));
-      newParams.set('endDate', dates[1].format('YYYY-MM-DD'));
-    } else {
-      newParams.delete('date');
-      newParams.delete('startDate');
-      newParams.delete('endDate');
+    const currentType = searchParams.get("type");
+
+    const isCleared = !dates || dates.length === 0 || !dates[0] || !dates[1];
+
+  if (!isCleared) {
+    newParams.set("startDate", dates[0].format("YYYY-MM-DD"));
+    newParams.set("endDate", dates[1].format("YYYY-MM-DD"));
+
+    if (currentType === "today" || currentType === "weekend" || currentType === "all") {
+      newParams.set("type", "date");
     }
+
+
+      setDates(dates);
+    } else {
+      newParams.delete("date");
+      newParams.delete("startDate");
+      newParams.delete("endDate");
+
+      if (["today", "weekend", "date"].includes(currentType)) {
+        newParams.set("type", "all");
+      }
+
+      setDates([]);
+    }
+
     setSearchParams(newParams);
-    setDates(dates);
   };
 
   const handleCityChange = (city) => {
+    console.log(city)
     const newParams = new URLSearchParams(searchParams);
-    alert(city)
+    alert(city);
     if (city) {
-      newParams.set('city', city);
+      newParams.set("city", city);
     } else {
-      newParams.delete('city');
+      newParams.delete("city");
     }
     setSearchParams(newParams);
   };
 
   return (
-    <div className="eventFilters">
+    <div className="eventFilters" id="filters">
       <div className="my-container">
         <Title level={1} className="eventFilters__filterLocation">
           Найти события в <SelectCity onChange={handleCityChange} />
@@ -70,9 +118,9 @@ const FiltersList = () => {
               onChange={handleTabChange}
               tabBarGutter={30}
               tabBarStyle={{ marginBottom: 0 }}
-              items={filters.map(filter => ({
+              items={filters.map((filter) => ({
                 key: filter.key,
-                label: filter.label
+                label: filter.label,
               }))}
             />
           </div>
@@ -83,7 +131,7 @@ const FiltersList = () => {
               value={dates}
               onChange={handleDateChange}
               type="range"
-              size='large'
+              size="large"
             />
           </div>
         </Flex>

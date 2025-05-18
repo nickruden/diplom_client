@@ -23,7 +23,7 @@ const EditEventPage = () => {
   const { data: eventData, isLoading: eventDataLoader, refetch: refetchEventData } = useGetEventById(id);
 
   // хук работы с объектом формы мероприятия
-  const { formData } = useUpdateEventForm(eventData);
+  const { formData, preparedData } = useUpdateEventForm(eventData);
 
   const handleSaveButton = () => {
     navigate(`/events/manage/edit/${id}/confirm`);
@@ -51,7 +51,7 @@ const EditEventPage = () => {
           {eventDataLoader ? (
             <MyLoader />
           ) : (
-            <EventTickets refetchEventData={refetchEventData} />
+            <EventTickets refetchEventData={refetchEventData} eventData={preparedData} />
           )}
         </div>
         <Flex justify="center" gap={10} className={styles.formActions}>

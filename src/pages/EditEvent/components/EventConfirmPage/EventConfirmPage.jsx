@@ -3,18 +3,26 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { Flex } from "antd";
 
-import { useEditEvent, useGetEventById } from "../../../../common/API/services/events/hooks.api";
+import {
+  useEditEvent,
+  useGetEventById,
+} from "../../../../common/API/services/events/hooks.api";
 import { useUpdateEventForm } from "../../hooks/useEditEventForm";
 import { editEventSteps } from "../../heplers/evetSteps";
 
 import MyButton from "../../../../common/components/UI/Button/MyButton";
-import { MyLoader, MySteps, OrganizerLayout } from "../../../../common/components";
+import {
+  MyLoader,
+  MySteps,
+  OrganizerLayout,
+} from "../../../../common/components";
 
 import { EventConfirm } from "../../../../modules/EventConfirm";
+import dayjs from "dayjs";
 
 import styles from "./EventConfirmPage.module.scss";
 import Title from "antd/es/typography/Title";
-
+import { formatTime } from "../../../../common/utils/Date/formatDate";
 
 const EventConfirmPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -23,33 +31,64 @@ const EventConfirmPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const { mutateAsync: editEvent } = useEditEvent();
-  const { data: eventData, isLoading: eventDataLoader, refetch: refetchEventData } = useGetEventById(id);
+  const {
+    data: eventData,
+    isLoading: eventDataLoader,
+    refetch: refetchEventData,
+  } = useGetEventById(id);
 
   // хук работы с объектом формы мероприятия
-  const { formData, handleInputChange, preparedData } = useUpdateEventForm(eventData);
+  const { formData, handleInputChange, preparedData } =
+    useUpdateEventForm(eventData);
+
+    console.log(preparedData)
 
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
-    }, 500)
-  }, [])
+    }, 500);
+  }, []);
+
+  const nowDate = new Date();
+
+  let isDateInPast;
+
+  if (eventData) {
+    if (
+      formatTime(eventData.startTime, { showDate: true }) <
+      formatTime(nowDate, { showDate: true, noNormalize: true })
+    ) {
+      isDateInPast = true;
+    } else {
+      isDateInPast = false;
+    }
+  }
 
   const handleSaveButton = async () => {
+    if (isDateInPast) {
+      navigate(`/events/manage/edit/${id}/info/#eventDate`);
+      setTimeout(() => {
+        const el = document.getElementById("eventDate");
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 500);
+      return;
+    }
+
     if (eventData.tickets.length === 0) {
       navigate(`/events/manage/edit/${id}/tickets`);
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     const updatedData = {
       ...preparedData,
-      status: 'Опубликовано',
+      status: "Опубликовано",
     };
-  
+
     try {
       await editEvent({ id, data: updatedData });
-      navigate('/events/manage/my-events');
+      navigate("/events/manage/my-events");
     } finally {
       setIsLoading(false);
     }
@@ -75,19 +114,39 @@ const EventConfirmPage = () => {
       <div className={styles.createEventPage}>
         <div className={styles.formContent}>
           {eventDataLoader || isLoading ? (
-            <MyLoader style={{height: "60vh"}} />
-          ) : eventData.tickets.length === 0 ? (
-            <>
-              <Flex className={styles.errorMessage}>
-                <Title level={4} className={styles.errorText}>
-                  Вы не заполнили билеты! Для публикации необходимо создать
-                  минимум 1 билет на мероприятие!
-                </Title>
-              </Flex>
-            <EventConfirm handleInputChange={handleInputChange} eventData={eventData} />
-            </>
+            <MyLoader style={{ height: "60vh" }} />
           ) : (
-            <EventConfirm handleInputChange={handleInputChange} eventData={eventData} />
+            <>
+              {eventData.tickets.length === 0 && (
+                <Flex vertical className={styles.errorMessage}>
+                  <Title level={4} className={styles.errorText}>
+                    Вы не заполнили билеты!
+                  </Title>
+                  <p style={{ fontSize: 16 }} className={styles.errorText}>
+                    Необходимо создать ходябы один вид
+                    билета! <br /> Eсли у вас бесплатное мероприятие, создайте билеты с
+                    нулевой ценой.
+                  </p>
+                </Flex>
+              )}
+
+              {isDateInPast && (
+                <Flex vertical className={styles.errorMessage}>
+                  <Title level={4} className={styles.errorText}>
+                    Дата мероприятия уже прошла!
+                  </Title>
+                  <p style={{ fontSize: 16 }} className={styles.errorText}>
+                    Чтобы опубликовать мероприятие,
+                    измените дату.
+                  </p>
+                </Flex>
+              )}
+
+              <EventConfirm
+                handleInputChange={handleInputChange}
+                eventData={eventData}
+              />
+            </>
           )}
         </div>
         <Flex gap={10} className={styles.formActions}>

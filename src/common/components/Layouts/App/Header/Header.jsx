@@ -18,7 +18,6 @@ import { resetFavoriteEvent } from '../../../../store/slices/favorite.slice';
 
 
 import styles from './Header.module.scss';
-import MyLoader from '../../../MyLoader/MyLoader';
 import { persistor } from '../../../../store';
 
 
@@ -85,7 +84,7 @@ const Header = () => {
           </div>
           <nav className={styles.header__menu}>
               <Link to='/' className={styles.header__menuLink}><HiOutlineHome size={20} /></Link>
-              <SearchInput placeholder="Найти мероприятие" size='large' width='450px' />
+              <SearchInput placeholder="Найти мероприятие" size='large' width='450px' widthButton={true} useURLParams={true} />
             </nav>
           <div className={styles.header__actions}>
             <Link to={!user ? `/auth` : `/events/manage/create`} className={styles.createButton}>

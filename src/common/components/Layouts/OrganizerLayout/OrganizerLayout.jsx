@@ -114,20 +114,40 @@ const OrganizerLayout = ({ children, steps, formData = null, type = null, refetc
                 <IoIosArrowBack /> Все события
               </Link>
               <Divider />
-              {formData ? <>
-              <Flex vertical>
-                <EventPreviewCard
-                  title={formData.title || formData.name}
-                  date={formatTime(formData.startTime, {showDate: true})}
-                  status={formData.status}
-                  previewLink={`/event/${id}`}
-                  refetchEventData={refetchEventData}
-                />
-              </Flex>
-              <Divider style={{ margin: "20px 0px 10px 0px" }} /> </> : ''}
+              {formData ? (
+                <>
+                  <Flex vertical>
+                    <EventPreviewCard
+                      title={formData.title || formData.name}
+                      date={formatTime(formData.startTime, {
+                        showDate: true,
+                        showYear: true,
+                        noNormalize: isStats ? false : true,
+                      })}
+                      status={formData.status}
+                      previewLink={`/event/${id}`}
+                      refetchEventData={refetchEventData}
+                    />
+                  </Flex>
+                  <Divider style={{ margin: "20px 0px 10px 0px" }} />{" "}
+                </>
+              ) : (
+                ""
+              )}
               {steps}
               <Divider style={{ margin: "10px 0px" }} />
-              {formData ? <Link to={`/events/manage/event/${id}/stats`}  className={`${styles.siderButton} ${isStats ? styles.active : ''}`}>Статистика мероприятия</Link> : ''}
+              {formData ? (
+                <Link
+                  to={`/events/manage/event/${id}/stats`}
+                  className={`${styles.siderButton} ${
+                    isStats ? styles.active : ""
+                  }`}
+                >
+                  Статистика мероприятия
+                </Link>
+              ) : (
+                ""
+              )}
             </Flex>
           </Sider>
         ) : (
@@ -136,7 +156,12 @@ const OrganizerLayout = ({ children, steps, formData = null, type = null, refetc
 
         <Layout className={styles.main}>
           <OrganizerHeader />
-          <Content className={styles.content} style={type === "stats" ? { padding: "130px 30px 50px 30px" } : {}}>{children}</Content>
+          <Content
+            className={styles.content}
+            style={type === "stats" ? { padding: "130px 30px 50px 30px" } : {}}
+          >
+            {children}
+          </Content>
         </Layout>
       </Layout>
     </Layout>

@@ -13,7 +13,6 @@ import { EventForm } from "../../../../modules/EventForm";
 
 import styles from "./EventInfoPage.module.scss";
 
-
 const EditEventPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const { id } = useParams();
@@ -22,17 +21,20 @@ const EditEventPage = () => {
   const { mutateAsync: editEvent, isPending } = useEditEvent();
   const { data: eventData, isLoading: eventDataLoader, refetch: refetchEventData } = useGetEventById(id);
 
-  // хук работы с объектом формы мероприятия
   const { formData, handleInputChange, preparedData, formErrors, wasValidated, validateForm, generalError, isDirty } = useUpdateEventForm(eventData);
-
   const handleSaveButton = async () => {
     const isValid = validateForm();
 
     if (!isValid) return message.error("Не все данные заполнены!");
-
     await editEvent({id, data: preparedData});
-    navigate(`/events/manage/edit/${id}/tickets`);
+    if (isPending) {
+      return <MyLoader title="Сохраняем..."/>
+    } else {
+      navigate(`/events/manage/edit/${id}/tickets`);
+    }
   };
+
+  console.log(preparedData)
 
   const handleStepChange = (stepIndex) => {
     setCurrentStep(stepIndex);
