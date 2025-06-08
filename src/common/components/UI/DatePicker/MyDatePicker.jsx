@@ -20,7 +20,7 @@ const MyDateTimePicker = ({ label, value, onChange, placeholder, type = 'date', 
         {type === 'date' ? (
           <DatePicker
             placeholder={placeholder}
-            value={value ?? null} // напрямую из пропсов
+            value={value ?? null}
             onChange={(date) => onChange(date ?? null)}
             format="DD.MM.YYYY"
             inputReadOnly
@@ -33,6 +33,7 @@ const MyDateTimePicker = ({ label, value, onChange, placeholder, type = 'date', 
             value={value?.[0] && value?.[1] ? value : []} // пустой массив если нет данных
             onChange={(dates) => onChange(dates?.[0] && dates?.[1] ? dates : [null, null])}
             format="DD.MM.YYYY"
+            disabled={[props.disableStartDate, false]}
             disabledDate={disabledDate}
             {...props}
           />

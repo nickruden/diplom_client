@@ -35,6 +35,7 @@ const EditEventPage = () => {
   };
 
   console.log(preparedData)
+  console.log(formData)
 
   const handleStepChange = (stepIndex) => {
     setCurrentStep(stepIndex);
@@ -63,6 +64,7 @@ const EditEventPage = () => {
               handleInputChange={handleInputChange}
               formErrors={formErrors}
               wasValidated={wasValidated}
+              eventData={eventData}
             />
           )}
         </div>

@@ -85,100 +85,125 @@ const EventManagementPage = () => {
     return matchesStatus && matchesSearch;
   });
 
-  const handleUpdateStatus = async ({ id, data }) => {
-    setLoadingEventId(id);
+const handleUpdateStatus = async ({ id, data }) => {
+  setLoadingEventId(id);
 
-    try {
+  try {
+    const event = eventsList?.find((e) => e.id === id);
+
+    const isUnpublishing = event?.status === "Опубликовано" && data === "Черновик";
+    const hasPurchases = event?.tickets?.some(ticket => ticket.purchases?.length > 0);
+
+    if (isUnpublishing && hasPurchases) {
+      Modal.info({
+        title: "У мероприятия есть купленные билеты",
+        content: (
+          <div>
+            <p>Если не опубликовать мероприятие,</p>
+            <p>средства вернутся пользователям автоматически за 1 день до его завершения.</p>
+          </div>
+        ),
+        okText: "Понятно",
+        onOk: async () => {
+          await updateStatus({ id, data: { status: data } });
+          await eventsListRefetch();
+        },
+      });
+    } else {
       await updateStatus({ id, data: { status: data } });
       await eventsListRefetch();
-    } finally {
-      setLoadingEventId(null);
     }
-  };
+  } finally {
+    setLoadingEventId(null);
+  }
+};
 
   const handleDeleteEvent = async (event) => {
+    const hasPurchases =
+      event.status !== "Завершено"
+        ? event.tickets?.some((ticket) => ticket.purchases?.length > 0)
+        : false;
+
+    // Завершено — сразу удаляем (если нет активных покупок)
+    if (event.status === "Завершено") {
+      if (hasPurchases) {
+        Modal.error({
+          title: "Удаление невозможно",
+          content: (
+            <div>
+              <p>У мероприятия есть проданные билеты.</p>
+              <p>
+                Перед удалением необходимо вернуть все билеты на странице
+                билетов.
+              </p>
+            </div>
+          ),
+          okText: "Понятно",
+        });
+      } else {
+        navigate(`/events/manage/event/${event.id}/stats?action=delete`);
+      }
+      return;
+    }
+
+    // Черновик — тоже удаляем (если нет покупок)
+    if (event.status === "Черновик") {
+      if (hasPurchases) {
+        Modal.error({
+          title: "Удаление невозможно",
+          content: (
+            <div>
+              <p>У мероприятия есть проданные билеты.</p>
+              <p>
+                Перед удалением необходимо вернуть все билеты на странице
+                билетов.
+              </p>
+            </div>
+          ),
+          okText: "Понятно",
+        });
+      } else {
+        navigate(`/events/manage/event/${event.id}/stats?action=delete`);
+      }
+      return;
+    }
+
+    // Любой другой статус — предлагаем перевод в черновики
     Modal.confirm({
       title: "Удалить мероприятие?",
       content:
-        "Вы уверены, что хотите удалить это мероприятие? Это действие необратимо.",
-      okText: "Удалить",
+        "Перед удалением необходимо перевести мероприятие в черновики. Продолжить?",
+      okText: "Перевести в черновики",
       cancelText: "Отмена",
       okButtonProps: { danger: true },
       onOk: async () => {
         try {
-          await deleteEvent({ id: event.id, data: { realyDel: false } });
-          message.success("Событие успешно удалено");
-          await eventsListRefetch();
-        } catch (error) {
-          if (error.status === 409) {
-            const now = dayjs();
-            const eventStart = dayjs(event.startTime);
-            const daysUntilEvent = eventStart.diff(now, "day");
+          await handleUpdateStatus({
+            id: event.id,
+            data: "Черновик",
+          });
+          message.success("Мероприятие переведено в черновики");
 
-            // Если до события меньше 3 дней
-            if (daysUntilEvent <= 3) {
-              navigate(`/events/manage/event/${event.id}/stats?action=delete`);
-              return;
-            } else {
-              // Если до события больше 3 дней
-              if (event.status === "Sold Out") {
-                Modal.error({
-                  title: "Важно! Мероприятие продано!",
-                  content: `Вы не сможете удалить мероприятие до ${dayjs(
-                    event.startTime
-                  )
-                    .subtract(3, "day")
-                    .format(
-                      "DD.MM.YYYY"
-                    )}. все средства будут автоматически возвращены покупателям.`,
-                  okText: "Понятно",
-                });
-                return;
-              }
-              Modal.confirm({
-                title: "Невозможно удалить событие",
-                content: (
-                  <div>
-                    <p>У этого события есть проданные билеты!</p>
-                    <p>Рекомендуем перевести событие в черновики.</p>
-                    <Divider style={{ margin: "12px 0" }} />
-                    <p style={{ color: "#faad14" }}>
-                      Если событие не будет опубликовано за 2 дня до начала,
-                      средства автоматически вернутся покупателям.
-                    </p>
-                  </div>
-                ),
-                okText: "Перевести в черновики",
-                cancelText: "Отмена",
-                onOk: async () => {
-                  try {
-                    await handleUpdateStatus({
-                      id: event.id,
-                      data: "Черновик",
-                    });
-                    message.success("Событие переведено в черновики");
-
-                    Modal.info({
-                      title: "Важно!",
-                      content: `Если событие не будет опубликовано до ${dayjs(
-                        event.startTime
-                      )
-                        .subtract(3, "day")
-                        .format(
-                          "DD.MM.YYYY"
-                        )}, все средства будут автоматически возвращены покупателям.`,
-                      okText: "Понятно",
-                    });
-                  } catch (err) {
-                    console.error("Ошибка при изменении статуса:", err);
-                  }
-                },
-              });
-            }
+          if (hasPurchases) {
+            Modal.error({
+              title: "Удаление невозможно",
+              content: (
+                <div>
+                  <p>У мероприятия есть проданные билеты.</p>
+                  <p>
+                    Перед удалением необходимо вернуть все билеты на странице
+                    билетов.
+                  </p>
+                </div>
+              ),
+              okText: "Понятно",
+            });
           } else {
-            message.error("Ошибка при удалении события");
-            console.error(error);
+            navigate(`/events/manage/event/${event.id}/stats?action=delete`);
           }
+        } catch (error) {
+          message.error("Ошибка при переводе в черновики");
+          console.error("Ошибка при изменении статуса:", error);
         }
       },
     });
@@ -452,7 +477,9 @@ const EventManagementPage = () => {
                               key: "statistic",
                               label: "Статистика",
                               onClick: () =>
-                                navigate(`/events/manage/event/${event.id}/stats`),
+                                navigate(
+                                  `/events/manage/event/${event.id}/stats`
+                                ),
                             },
                             {
                               key: "delete",

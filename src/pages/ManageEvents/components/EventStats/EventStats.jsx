@@ -91,10 +91,8 @@ const EventDetailsPage = () => {
       title: "Подтверждение удаления",
       content: (
         <div>
-          <p>Вы точно хотите удалить событие?</p>
-          <p style={{ color: "red" }}>
-            Все средства будут возвращены покупателям!
-          </p>
+          <p>Вы точно хотите удалить событие? Это действие необратимо!</p> <br></br>
+          <p>Все упоминания о вашем мероприятии исчезнут у интересовавшихся пользователей!</p>
         </div>
       ),
       okText: "Удалить",
@@ -103,7 +101,7 @@ const EventDetailsPage = () => {
         try {
           await deleteEvent({ id: id, data: { realyDel: true } });
           navigate("/events/manage/my-events");
-          message.success("Событие удалено, средства возвращены");
+          message.success("Событие удалено");
         } catch (error) {
           message.error("Ошибка при удалении");
           console.error(error);
@@ -234,7 +232,14 @@ const EventDetailsPage = () => {
                   <Flex vertical>
                     <Text className="eventStats__title">Выручка</Text>
                     <Text className="eventStats__value">
-                      {eventData.revenue} ₽
+                      {eventData.tickets
+                        ?.reduce(
+                          (total, ticket) =>
+                            total + ticket.price * ticket.soldCount,
+                          0
+                        )
+                        .toLocaleString("ru-RU")}{" "}
+                      ₽
                     </Text>
                   </Flex>
                 </Flex>

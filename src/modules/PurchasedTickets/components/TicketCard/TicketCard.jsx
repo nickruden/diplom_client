@@ -4,6 +4,7 @@ import styles from "./TicketCard.module.scss";
 import {
   formatDate,
   formatTime,
+  formatTimeRange,
 } from "../../../../common/utils/Date/formatDate";
 import miniLogo from "../../../../assets/MiniLogo.svg";
 import { Link } from "react-router-dom";
@@ -15,20 +16,17 @@ import { MdDeleteOutline } from "react-icons/md";
 import MyButton from "../../../../common/components/UI/Button/MyButton";
 import { useRefundTicket } from "../../../../common/API/services/payment/hooks.api";
 import { FaExternalLinkAlt } from "react-icons/fa";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 
 
-const TicketCard = ({ purchase, refetchPurchase }) => {
+const TicketCard = ({ purchase, refetchPurchase, isEventCompleted }) => {
   const [rows, setRows] = useState(2);
-  const { eventInfo, purchaseId } = purchase;
+  const { eventInfo, purchaseId, ticketInfo } = purchase;
   const qrValue = `https://yourapp.com/check-ticket/${purchaseId}`;
-  const { mutateAsync: refoundTicket, error: refoundError } = useRefundTicket();
-
+  const { mutateAsync: refoundTicket, error: refoundError, isLoading } = useRefundTicket();
 
   const isOnline = eventInfo.location === "Онлайн";
-  let onlineInfo = null;
 
+  let onlineInfo = null;
   try {
     onlineInfo = eventInfo.onlineInfo ? JSON.parse(eventInfo.onlineInfo) : null;
   } catch (err) {
@@ -53,9 +51,13 @@ const TicketCard = ({ purchase, refetchPurchase }) => {
   };
 
   return (
-    <Flex vertical gap={10} className={styles.ticketsWrapper}>
+    <Flex
+      vertical
+      gap={10}
+      className={`${styles.ticketsWrapper} ${isEventCompleted ? styles.ticketCompleted : ""}`}
+    >
       <Flex justify="space-between" align="center">
-        {eventInfo.refundDate ? (
+        {eventInfo.refundDate && !isEventCompleted ? (
           <Text type="secondary" style={{ fontSize: 18, fontStyle: "italic" }}>
             Возврат возможен до: {formatDate(eventInfo.refundDate)}
           </Text>
@@ -70,8 +72,8 @@ const TicketCard = ({ purchase, refetchPurchase }) => {
             danger
             style={{ fontSize: "16px" }}
             onClick={handleRefund}
-            loading={refoundTicket.isLoading}
-            disabled={!eventInfo.refundDate}
+            loading={isLoading}
+            disabled={!eventInfo.refundDate || isEventCompleted}
           >
             <MdDeleteOutline /> Вернуть билет
           </MyButton>
@@ -80,30 +82,20 @@ const TicketCard = ({ purchase, refetchPurchase }) => {
           </MyButton>
         </Flex>
       </Flex>
+
       <div className={`${styles.ticket} ${isOnline ? styles.online : ""}`}>
-        <Link
-          to={`/event/${eventInfo.id}`}
-          style={{ display: "block", width: "100%" }}
-        >
-          <Flex
-            gap={30}
-            justify="space-between"
-            flex={1}
-            className={styles.inner}
-          >
+        <Link to={`/event/${eventInfo.id}`} style={{ display: "block", width: "100%" }}>
+          <Flex gap={30} justify="space-between" flex={1} className={styles.inner}>
             <div className={styles.imageWrapper}>
-              <img
-                src={eventInfo.image}
-                alt="event"
-                className={styles.eventImage}
-              />
+              <img src={eventInfo.image} alt="event" className={styles.eventImage} />
             </div>
             <Flex vertical flex={1} className={styles.ticketInfo}>
               <Flex vertical gap={10} className={styles.header}>
                 <Text className={styles.eventDate}>
-                  {formatTime(eventInfo.startTime, {
-                    showDate: true,
+                  {formatTimeRange(purchase.validFrom, purchase.validTo, {
+                    showYear: false,
                     showWeekday: true,
+                    noNormalize: true,
                   })}
                 </Text>
                 <Paragraph ellipsis={{ rows }} className={styles.eventNameWrap}>
@@ -126,27 +118,18 @@ const TicketCard = ({ purchase, refetchPurchase }) => {
         </Link>
 
         {!isOnline && (
-          <Flex
-            vertical
-            align="center"
-            justify="center"
-            gap={10}
-            className={styles.qrSection}
-          >
+          <Flex vertical align="center" justify="center" gap={10} className={styles.qrSection}>
             <QRCode value={qrValue} size={150} icon={miniLogo} />
             <Text className={styles.ticketId}>#{purchaseId}</Text>
           </Flex>
         )}
+
         {isOnline && onlineInfo && (
           <div className={styles.onlineAccessBlock}>
             <Flex vertical gap={20}>
-              <Flex juevenlystify="space-" gap={100}>
+              <Flex gap={100}>
                 {onlineInfo.link && (
-                  <Link
-                    to={onlineInfo.link}
-                    target="_blank"
-                    className={styles.link}
-                  >
+                  <Link to={onlineInfo.link} target="_blank" className={styles.link}>
                     <FaExternalLinkAlt size={20} />
                     Ссылка на мероприятие
                   </Link>
@@ -157,12 +140,10 @@ const TicketCard = ({ purchase, refetchPurchase }) => {
                   </Text>
                 )}
               </Flex>
-              {onlineInfo.instructions ? (
+              {onlineInfo.instructions && (
                 <Flex className={styles.description}>
-                  <div dangerouslySetInnerHTML={{ __html: onlineInfo.instructions, }} />
+                  <div dangerouslySetInnerHTML={{ __html: onlineInfo.instructions }} />
                 </Flex>
-              ) : (
-                ""
               )}
             </Flex>
           </div>
@@ -171,5 +152,6 @@ const TicketCard = ({ purchase, refetchPurchase }) => {
     </Flex>
   );
 };
+
 
 export default TicketCard;

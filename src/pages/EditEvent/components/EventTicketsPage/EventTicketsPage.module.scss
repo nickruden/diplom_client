@@ -1,11 +1,12 @@
 .createEventPage {
-    height: 100%;
+    // height: 100vh;
 
     .formContent {
         margin-bottom: 70px;
     }
 
     .formActions {
+        margin-bottom: 30px;
 
         .buttonSave {
             padding: 10px 20px;

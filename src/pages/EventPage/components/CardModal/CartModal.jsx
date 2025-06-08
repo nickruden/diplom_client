@@ -15,11 +15,17 @@ import styles from "./CartModal.module.scss";
 import { useForm } from "antd/es/form/Form";
 import MyInput from "../../../../common/components/UI/Input/MyInput";
 import { IoTicketOutline } from "react-icons/io5";
-import { formatTime } from "../../../../common/utils/Date/formatDate";
-import { useCancelPayment, useConfirmPayment, useCreatePayment } from "../../../../common/API/services/payment/hooks.api";
-import { MyEmpty } from "../../../../common/components"
+import {
+  formatTime,
+  formatTimeRange,
+} from "../../../../common/utils/Date/formatDate";
+import {
+  useCancelPayment,
+  useConfirmPayment,
+  useCreatePayment,
+} from "../../../../common/API/services/payment/hooks.api";
+import { MyEmpty } from "../../../../common/components";
 import { MdOutlinePayment } from "react-icons/md";
-
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -78,64 +84,63 @@ const CartModal = ({ tickets, eventData }) => {
 
     checkout.render("payment-form").then(() => {
       console.log("Платёжная форма загружена");
-    
+
       checkout.on("success", async () => {
         console.log("Платёж успешно завершён");
-    
+
         message.success("Оплата прошла успешно");
-    
+
         const ticketsToBuy = selectedTickets.map((ticket) => ({
           idTicket: ticket.id,
           count: ticketCounts[ticket.id],
           price: ticket.price,
+          validFrom: ticket.validFrom,
+          validTo: ticket.validTo,
         }));
 
-        await confirmPayment({idBuyer: user.id, tickets: ticketsToBuy});
+        await confirmPayment({ idBuyer: user.id, tickets: ticketsToBuy });
 
-    
-        // 3. Через 2-3 секунды редирект
         setTimeout(() => {
           window.location.href = `${window.location.origin}/my-tickets`;
         }, 1000);
       });
     });
-    
   }, [confirmationToken]);
 
-const handlePay = async () => {
-  try {
-    const ticketsToBuy = selectedTickets.map((ticket) => ({
-      idTicket: ticket.id,
-      count: ticketCounts[ticket.id],
-      price: ticket.price,
-    }));
+  const handlePay = async () => {
+    try {
+      const ticketsToBuy = selectedTickets.map((ticket) => ({
+        idTicket: ticket.id,
+        count: ticketCounts[ticket.id],
+        price: ticket.price,
+        validFrom: ticket.validFrom,
+        validTo: ticket.validTo,
+      }));
 
-    if (finalTotal === 0) {
-      await confirmPayment({ idBuyer: user.id, tickets: ticketsToBuy });
-      message.success("Билеты успешно оформлены!");
+      if (finalTotal === 0) {
+        await confirmPayment({ idBuyer: user.id, tickets: ticketsToBuy });
+        message.success("Билеты успешно оформлены!");
 
-      setTimeout(() => {
-        window.location.href = `${window.location.origin}/my-tickets`;
-      }, 1000);
+        setTimeout(() => {
+          window.location.href = `${window.location.origin}/my-tickets`;
+        }, 1000);
 
-      return;
+        return;
+      }
+
+      const data = { amount: finalTotal };
+      const payment = await createPeyment(data);
+      setConfirmationToken(payment.confirmation.confirmation_token);
+    } catch (error) {
+      console.error(error);
+      message.error("Ошибка при оформлении");
     }
-
-    const data = { amount: finalTotal };
-    const payment = await createPeyment(data);
-    setConfirmationToken(payment.confirmation.confirmation_token);
-  } catch (error) {
-    console.error(error);
-    message.error("Ошибка при оформлении");
-  }
-};
-
+  };
 
   const handleCancel = async () => {
-      setConfirmationToken(null);
-      closeCart();
+    setConfirmationToken(null);
+    closeCart();
   };
-  
 
   return (
     <Modal
@@ -236,8 +241,8 @@ const handlePay = async () => {
                   </Title>
                 </Paragraph>
                 <Text type="secondary" className={styles.eventDate}>
-                  {formatTime(eventData.startTime, {
-                    showDate: true,
+                  {formatTimeRange(eventData.startTime, eventData.endTime, {
+                    showYear: false,
                     showWeekday: true,
                   })}
                 </Text>
@@ -254,9 +259,17 @@ const handlePay = async () => {
                   key={ticket.id}
                   className={styles.ticketInner}
                 >
-                  <Flex align="center" gap={5} className={styles.ticketName}>
-                    <IoTicketOutline /> {ticket.name}
-                  </Flex>
+                  <div>
+                    <Flex align="center" gap={5} className={styles.ticketName}>
+                      <IoTicketOutline /> {ticket.name}
+                    </Flex>
+                    <div style={{ fontSize: "12px", color: "#888", marginTop: 2 }}>
+                      {formatTimeRange(ticket.validFrom, ticket.validTo, {
+                        showYear: false,
+                        showWeekday: true,
+                      })}
+                    </div>
+                  </div>
                   <div className={styles.ticketPrice}>
                     {ticketCounts[ticket.id]} x {ticket.price}₽
                   </div>

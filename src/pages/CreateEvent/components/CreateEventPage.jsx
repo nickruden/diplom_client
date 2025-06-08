@@ -39,8 +39,6 @@ const CreateEventPage = () => {
     validateForm
   } = useCreateEventForm();
 
-  console.log(preparedData)
-
   const steps = [
     {
       title: "Основная информация",

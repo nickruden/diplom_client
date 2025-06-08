@@ -33,40 +33,39 @@ const EditEventPage = () => {
     setCurrentStep(stepIndex);
   };
 
-  return (
-    <OrganizerLayout
-     formData={formData}
-      steps={
-        <MySteps
-          direction="vertical"
-          steps={editEventSteps(id)}
-          currentStep={currentStep}
-          onStepClick={handleStepChange}
-        />
-      }
-      refetchEventData={refetchEventData}
-    >
-      <Flex vertical justify="space-between" className={styles.createEventPage}>
-        <div className={styles.formContent}>
-          {eventDataLoader ? (
-            <MyLoader />
-          ) : (
-            <EventTickets refetchEventData={refetchEventData} eventData={preparedData} />
-          )}
-        </div>
-        <Flex justify="center" gap={10} className={styles.formActions}>
-          <MyButton
-            type="primary"
-            size="large"
-            onClick={handleSaveButton}
-            className={styles.buttonSave}
-          >
-            Далее
-          </MyButton>
-        </Flex>
+return eventDataLoader ? (
+  <MyLoader />
+) : (
+  <OrganizerLayout
+    formData={formData}
+    steps={
+      <MySteps
+        direction="vertical"
+        steps={editEventSteps(id)}
+        currentStep={currentStep}
+        onStepClick={handleStepChange}
+      />
+    }
+    refetchEventData={refetchEventData}
+  >
+    <Flex vertical justify="space-between" className={styles.createEventPage}>
+      <div className={styles.formContent}>
+        <EventTickets refetchEventData={refetchEventData} eventData={formData} />
+      </div>
+      <Flex justify="center" gap={10} className={styles.formActions}>
+        <MyButton
+          type="primary"
+          size="large"
+          onClick={handleSaveButton}
+          className={styles.buttonSave}
+        >
+          Далее
+        </MyButton>
       </Flex>
-    </OrganizerLayout>
-  );
+    </Flex>
+  </OrganizerLayout>
+);
+
 };
 
 export default EditEventPage;

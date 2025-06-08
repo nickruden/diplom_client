@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { Affix, Avatar, Flex, Typography } from "antd";
+import { Affix, Avatar, Divider, Flex, Typography } from "antd";
 const { Title } = Typography;
 
 import { categoryConfig } from "../../API/caregoryStyles";
@@ -11,17 +11,29 @@ import { MdAccessTime } from "react-icons/md";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { BsCashCoin } from "react-icons/bs";
 
-import { useEditEvent, useGetEventById } from "../../../../common/API/services/events/hooks.api";
+import {
+  useEditEvent,
+  useGetEventById,
+} from "../../../../common/API/services/events/hooks.api";
 import { calculateDuration } from "../../../../common/utils/Date/calculateDuration";
 import { useAuth } from "../../../../common/hooks/useAuth";
-import { formatDate, formatTimeRange } from "../../../../common/utils/Date/formatDate";
+import {
+  formatDate,
+  formatTimeRange,
+} from "../../../../common/utils/Date/formatDate";
 
-
-import { AppLayout, FollowButton, MyEmpty, MyLoader, MyLocationMap, MySkeleton, TicketCard } from "../../../../common/components";
+import {
+  AppLayout,
+  FollowButton,
+  MyEmpty,
+  MyLoader,
+  MyLocationMap,
+  MySkeleton,
+  TicketCard,
+} from "../../../../common/components";
 
 import { EventList } from "../../../../modules/EventList";
 import { BigBanner } from "../../../../modules/BigBanner";
-
 
 import { CartProvider, useCart } from "../../context/CartContext";
 
@@ -31,7 +43,7 @@ import styles from "./EventPage.module.scss";
 import MyButton from "../../../../common/components/UI/Button/MyButton";
 import { CiEdit } from "react-icons/ci";
 import { useGetTicketsByEvent } from "../../../../common/API/services/tickets/hooks.api";
-
+import { groupTicketsByValidity } from "../../utils/groupTicketsByDate";
 
 export const EventPage = () => {
   const { user } = useAuth();
@@ -46,20 +58,22 @@ export const EventPage = () => {
     isSuccess: eventSuccess,
   } = useGetEventById(id);
 
-  const {
-    data: ticketsData,
-    isLoading: ticketsLoading,
-  } = useGetTicketsByEvent(id);
+  const { data: ticketsData, isLoading: ticketsLoading } =
+    useGetTicketsByEvent(id);
+
+  const groupedTickets = useMemo(() => {
+    return groupTicketsByValidity(ticketsData?.tickets || []);
+  }, [ticketsData]);
 
   const { mutate: updateEventViews } = useEditEvent();
 
   useEffect(() => {
-    if (eventSuccess && user.id !== eventData?.organizerId) {
+    if (eventSuccess && user?.id !== eventData?.organizerId) {
       const updatedViews = Number(eventData.viewsEvent) + 1;
-      
+
       updateEventViews({
-        id: id, 
-        data: { viewsEvent: updatedViews }
+        id: id,
+        data: { viewsEvent: updatedViews },
       });
     }
   }, [eventSuccess]);
@@ -73,11 +87,29 @@ export const EventPage = () => {
           title="Данные потерялись, но мы обязательно их найдём"
           image={<FaRegSadTear size={120} />}
         />
-      ) : eventData.status === "Черновик" ? <MyEmpty
+      ) : eventData.status === "Черновик" ? (
+        <MyEmpty
           title="Пользователь снял с публикации данное мероприятие"
           image={<FaRegSadTear size={120} />}
-        /> : (
+        />
+      ) : (
         <>
+{eventData.status === "Завершено" && (
+            <Affix offsetTop={80}>
+              <div
+                style={{
+                  backgroundColor: "#fff3cd",
+                  padding: "12px 24px",
+                  textAlign: "center",
+                  borderBottom: "1px solid #ffeeba",
+                  position: "relative",
+                  zIndex: 1000,
+                }}
+              >
+                <strong>Мероприятие завершено</strong>
+              </div>
+            </Affix>
+          )}
           <BigBanner data={eventData.images} type="eventPage" />
           <div className={styles.eventDetails}>
             <Flex justify="space-between" className="my-container">
@@ -142,7 +174,8 @@ export const EventPage = () => {
                       {" "}
                       <FaRegCalendarAlt />
                       {formatTimeRange(eventData.startTime, eventData.endTime, {
-                        showWeekday: true, noNormalize: true,
+                        showWeekday: true,
+                        noNormalize: true,
                       })}
                     </Flex>
                     <Flex
@@ -199,10 +232,16 @@ export const EventPage = () => {
                       <FaMapLocationDot />
                       {eventData.location}
                     </Flex>
-                    {eventData.location === "Онлайн" ? '' : 
-                    <div className={styles.locationMap}>
-                      <MyLocationMap location={eventData.location} height="400px" />
-                    </div>}
+                    {eventData.location === "Онлайн" ? (
+                      ""
+                    ) : (
+                      <div className={styles.locationMap}>
+                        <MyLocationMap
+                          location={eventData.location}
+                          height="400px"
+                        />
+                      </div>
+                    )}
                   </Flex>
                 </div>
                 <div className={styles.description}>
@@ -219,24 +258,57 @@ export const EventPage = () => {
                     Билеты
                   </Title>
                   <div className={styles.ticketsBody}>
-                    {ticketsLoading ? [...Array(2)].map((_, i) =>  {
-                      <Flex gap={30} wrap className={styles.ticketsContainer}>
-                        <MySkeleton width="100%" height="250px" /> 
-                        </Flex>
-                    }) :
-                    <Flex gap={10} wrap className={styles.ticketsContainer}>
-                      {ticketsData.tickets.map((ticket) => (
-                        <div className={styles.ticket}>
-                        <TicketCard
-                          key={ticket.id}
-                          ticket={ticket}
-                          count={ticketCounts[ticket.id] || 0}
-                          onIncrement={() => increment(ticket.id)}
-                          onDecrement={() => decrement(ticket.id)}
-                        />
-                        </div>
-                      ))}
-                    </Flex>}
+                    {ticketsLoading
+                      ? [...Array(2)].map((_, i) => {
+                          <Flex
+                            gap={30}
+                            wrap
+                            className={styles.ticketsContainer}
+                          >
+                            <MySkeleton width="100%" height="250px" />
+                          </Flex>;
+                        })
+                      : Object.entries(groupedTickets).map(
+                          ([date, tickets]) => (
+                            <Flex
+                              vertical
+                              gap={10}
+                              key={date}
+                              className={styles.ticketsGroup}
+                            >
+                              <Divider
+                                orientation="left"
+                                style={{ borderColor: "#7cb305" }}
+                              >
+                                <Title
+                                  level={4}
+                                  className={styles.ticketDateTitle}
+                                >
+                                  {date}
+                                </Title>
+                              </Divider>
+                              <Flex
+                                gap={10}
+                                wrap
+                                className={styles.ticketsContainer}
+                              >
+                                {tickets.map((ticket) => (
+                                  <div
+                                    className={styles.ticket}
+                                    key={ticket.id}
+                                  >
+                                    <TicketCard
+                                      ticket={ticket}
+                                      count={ticketCounts[ticket.id] || 0}
+                                      onIncrement={() => increment(ticket.id)}
+                                      onDecrement={() => decrement(ticket.id)}
+                                    />
+                                  </div>
+                                ))}
+                              </Flex>
+                            </Flex>
+                          )
+                        )}
                   </div>
                 </div>
                 <div className={styles.creatorEvents}>
@@ -261,14 +333,14 @@ export const EventPage = () => {
               ) : (
                 ""
               )}
-                <Affix offsetTop={100}>
-                  <TicketsAside
-                    userId={user?.id}
-                    eventData={eventData}
-                    ticktesRef={refTickets}
-                    ticketsData={ticketsData}
-                  />
-                </Affix>
+              <Affix offsetTop={100}>
+                <TicketsAside
+                  userId={user?.id}
+                  eventData={eventData}
+                  ticktesRef={refTickets}
+                  ticketsData={ticketsData}
+                />
+              </Affix>
             </Flex>
           </div>
         </>

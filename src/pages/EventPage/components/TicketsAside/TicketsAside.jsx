@@ -20,7 +20,7 @@ const TicketsAside = ({ userId, eventData, ticktesRef, ticketsData }) => {
 
   const { ticketCounts, openCart } = useCart();
 
-  const totalPrice = ticketsData.tickets.reduce(
+  const totalPrice = ticketsData?.tickets.reduce(
     (acc, ticket) => acc + (ticket.price * (ticketCounts[ticket.id] || 0)),
     0
   );
@@ -56,6 +56,7 @@ const TicketsAside = ({ userId, eventData, ticktesRef, ticketsData }) => {
                   color="orange"
                   size="large"
                   className={styles.buyButton}
+                  disabled={eventData.status === "Завершено"}
                   onClick={() => {
                     if (!user) {
                       navigate(`/auth`);

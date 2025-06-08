@@ -8,9 +8,6 @@ import { LuLaptopMinimal } from "react-icons/lu";
 import { SiOpenstreetmap } from "react-icons/si";
 
 import { useGetMyTickets } from "../../../../common/API/services/tickets/hooks.api";
-import { FaCalendarAlt, FaList } from "react-icons/fa";
-import SearchInput from "../../../../common/components/UI/Search/Search";
-import MySegmented from "../../../../common/components/UI/Segmented/MuSegmented";
 
 const { Title } = Typography;
 
@@ -31,6 +28,8 @@ const TicketsList = () => {
 
     return true;
   });
+
+  console.log(ticketsData)
 
 
   return (
@@ -74,10 +73,15 @@ const TicketsList = () => {
               ]}
             />
             <Flex vertical gap={50} style={{ width: "100%" }}>
-              {filteredTickets.map((ticket) => (
-                <TicketCard purchase={ticket} refetchPurchase={refetchPurchase} />
-              ))}
-            </Flex>
+  {filteredTickets.map((ticket) => (
+    <TicketCard
+      key={ticket.id}
+      purchase={ticket}
+      isEventCompleted={ticket.eventInfo.status === "Завершено"}
+      refetchPurchase={refetchPurchase}
+    />
+  ))}
+</Flex>
           </div>
         )}
       </div>

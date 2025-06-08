@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
-
-import { Button, Typography, Tag, Flex, Spin } from "antd";
+import { useState } from "react";
+import { Button, Typography, Tag, Flex, Spin, Modal } from "antd";
 const { Title, Text } = Typography;
 
 import { FaExternalLinkAlt, FaRegCalendarMinus } from "react-icons/fa";
@@ -10,8 +10,7 @@ import styles from "./EventPreviewCard.module.scss";
 import MyButton from "../../../../UI/Button/MyButton";
 import MyDropdown from "../../../../UI/Dropdown/MyDropdown";
 import { IoIosArrowDown } from "react-icons/io";
-import { useEditEvent } from "../../../../../API/services/events/hooks.api";
-import { useState } from "react";
+import { useEditEvent, useGetEventById } from "../../../../../API/services/events/hooks.api";
 
 const statusColors = {
   Опубликовано: "green",
@@ -20,16 +19,28 @@ const statusColors = {
   Завершено: "gray",
 };
 
-const EventPreviewCard = ({ title, date, status = "Черновик", previewLink, refetchEventData }) => {
+const EventPreviewCard = ({
+  title,
+  date,
+  status = "Черновик",
+  previewLink,
+  refetchEventData,
+}) => {
   const navigate = useNavigate();
   const { id } = useParams();
-    const [loadingEventId, setLoadingEventId] = useState(null);
-  
-    const { mutate: updateStatus } = useEditEvent();
-  
-    const handleUpdateStatus = async ({ id, data }) => {
-      setLoadingEventId(id);
-    
+  const [loadingEventId, setLoadingEventId] = useState(null);
+
+  const { data: eventData } = useGetEventById(id);
+  const { mutate: updateStatus } = useEditEvent();
+
+  const handleUpdateStatus = async ({ id, data }) => {
+    setLoadingEventId(id);
+
+    const isUnpublishing = status === "Опубликовано" && data === "Черновик";
+    const hasPurchases = eventData?.totalSoldTickets ? true : false;
+    console.log(eventData, hasPurchases)
+
+    const performUpdate = async () => {
       updateStatus(
         { id, data: { status: data } },
         {
@@ -41,17 +52,33 @@ const EventPreviewCard = ({ title, date, status = "Черновик", previewLin
       );
     };
 
+    if (isUnpublishing && hasPurchases) {
+      Modal.info({
+        title: "У мероприятия есть купленные билеты",
+        content: (
+          <div>
+            <p>Если не опубликовать мероприятие,</p>
+            <p>средства вернутся пользователям автоматически за 1 день до его завершения.</p>
+          </div>
+        ),
+        okText: "Понятно",
+        onOk: performUpdate,
+      });
+    } else {
+      await performUpdate();
+    }
+  };
+
   return (
     <div className={styles.eventPreviewCard}>
       <RiInfoCardLine size={100} className={styles.eventPreviewCard__bgIcon} />
       <div className={styles.eventPreviewCard__header}>
-        <Title level={4} className={styles.title}>
-          {title}
-        </Title>
+        <Title level={4} className={styles.title}>{title}</Title>
         <Flex align="center" gap={8} className={styles.dateInfo}>
           <FaRegCalendarMinus size={18} className={styles.dateIcon} />
           <Text className={styles.dateText}>{date}</Text>
         </Flex>
+
         <Flex gap={18} align="center" style={{ marginTop: 8 }}>
           <MyDropdown
             menu={{
@@ -62,12 +89,10 @@ const EventPreviewCard = ({ title, date, status = "Черновик", previewLin
                   items.push({
                     key: "unpublic",
                     label: "Снять с публикации",
-                    onClick: () => {
-                      handleUpdateStatus({
-                        id: id,
-                        data: "Черновик",
-                      });
-                    },
+                    onClick: () => handleUpdateStatus({
+                      id,
+                      data: "Черновик",
+                    }),
                   });
                 }
 
@@ -75,7 +100,7 @@ const EventPreviewCard = ({ title, date, status = "Черновик", previewLin
                   items.push({
                     key: "public",
                     label: "Опубликовать",
-                    onClick: () => navigate(`/events/manage/edit/${id}/confirm`)
+                    onClick: () => navigate(`/events/manage/edit/${id}/confirm`),
                   });
                 }
 
@@ -97,13 +122,13 @@ const EventPreviewCard = ({ title, date, status = "Черновик", previewLin
               )}
             </Tag>
           </MyDropdown>
+
           <MyButton
             type="link"
             href={previewLink}
             target="_blank"
             className={styles.prviewButton}
           >
-            {" "}
             <FaExternalLinkAlt />
           </MyButton>
         </Flex>

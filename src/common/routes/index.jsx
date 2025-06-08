@@ -1,5 +1,5 @@
 import { AccountPage } from "../../pages/AccountPage";
-import { AuthPage } from "../../pages/AuthPage";
+import { AuthPage, RegisterPage } from "../../pages/AuthPage";
 import { CategoryPage } from "../../pages/CategoryPage";
 import { CreateEventPage } from "../../pages/CreateEvent";
 import { CreatorPage } from "../../pages/CreatorPage";
@@ -19,6 +19,10 @@ export const routes = [
     {
         path: '/auth',
         element: <AuthPage />,
+    },
+    {
+        path: '/register',
+        element: <RegisterPage />,
     },
     {
         path: '/my-account',

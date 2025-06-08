@@ -118,8 +118,8 @@ const BigBanner = ({ data, type = "main" }) => {
                               </Paragraph>
                               <div className={styles.bigBanner__time}>
                                 <IoCalendarOutline />{" "}
-                                {formatDate(banner.startTime)} •{" "}
-                                {formatTime(banner.startTime)}
+                                {formatDate(banner.activeDate)} •{" "}
+                                {formatTime(banner.activeDate)}
                               </div>
                               <div className={styles.bigBanner__location}>
                                 <SlLocationPin /> {banner.location}

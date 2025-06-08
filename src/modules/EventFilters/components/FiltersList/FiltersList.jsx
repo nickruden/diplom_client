@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Tabs, ConfigProvider, Flex } from "antd";
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from "react-router-dom";
 
 const { Title } = Typography;
 import dayjs from "dayjs";
@@ -8,14 +8,14 @@ import dayjs from "dayjs";
 import SelectCity from "../SelectCity/SelectCity";
 
 const filters = [
-  { key: 'all', label: 'Все' },
-  { key: 'online', label: 'Online' },
-  { key: 'free', label: 'Бесплатные' },
-  { key: 'today', label: 'Сегодня' },
-  { key: 'weekend', label: 'Выходные' },
+  { key: "all", label: "Все" },
+  { key: "online", label: "Online" },
+  { key: "free", label: "Бесплатные" },
+  { key: "today", label: "Сегодня" },
+  { key: "weekend", label: "Выходные" },
 ];
 
-import './FiltersList.scss'
+import "./FiltersList.scss";
 import MyDateTimePicker from "../../../../common/components/UI/DatePicker/MyDatePicker";
 
 const FiltersList = () => {
@@ -68,14 +68,17 @@ const FiltersList = () => {
 
     const isCleared = !dates || dates.length === 0 || !dates[0] || !dates[1];
 
-  if (!isCleared) {
-    newParams.set("startDate", dates[0].format("YYYY-MM-DD"));
-    newParams.set("endDate", dates[1].format("YYYY-MM-DD"));
+    if (!isCleared) {
+      newParams.set("startDate", dates[0].format("YYYY-MM-DD"));
+      newParams.set("endDate", dates[1].format("YYYY-MM-DD"));
 
-    if (currentType === "today" || currentType === "weekend" || currentType === "all") {
-      newParams.set("type", "date");
-    }
-
+      if (
+        currentType === "today" ||
+        currentType === "weekend" ||
+        currentType === "all"
+      ) {
+        newParams.set("type", "date");
+      }
 
       setDates(dates);
     } else {
@@ -94,9 +97,7 @@ const FiltersList = () => {
   };
 
   const handleCityChange = (city) => {
-    console.log(city)
     const newParams = new URLSearchParams(searchParams);
-    alert(city);
     if (city) {
       newParams.set("city", city);
     } else {

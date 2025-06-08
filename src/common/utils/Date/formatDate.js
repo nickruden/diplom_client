@@ -1,4 +1,7 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 /**
  * Удаляет смещение из dayjs объекта и возвращает Date без timezone-сдвига.
@@ -111,6 +114,7 @@ export function formatTimeRange(startInput, endInput, options = {}) {
 
   const startDate = noNormalize ? new Date(startInput) : normalizeToLocalDate(startInput);
   const endDate = noNormalize ? new Date(endInput) : normalizeToLocalDate(endInput);
+
   if (!startDate || !endDate) return '';
 
   const isSameDay = startDate.getDate() === endDate.getDate() &&
@@ -136,4 +140,8 @@ export function formatTimeRange(startInput, endInput, options = {}) {
 export const normalizeToUtcWithoutOffset = (val) => {
   if (!val || !dayjs.isDayjs(val)) return null;
   return val.subtract(val.utcOffset(), 'minute');
+};
+
+export const formatNormalizeDate = (date) => {
+  return dayjs(date).format("YYYY-MM-DDTHH:mm:ss[Z]");
 };

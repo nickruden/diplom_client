@@ -1,10 +1,10 @@
-import { AppLayout } from '../../../common/components';
+import { AuthLayout } from '../../../common/components';
 import { AuthModule } from '../../../modules/Auth';
 
 export function AuthPage() {
   return (
-    <AppLayout>
+    <AuthLayout>
         <AuthModule />
-    </AppLayout>
+    </AuthLayout>
   )
 }

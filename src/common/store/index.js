@@ -14,11 +14,13 @@ import storage from 'redux-persist/lib/storage';
 import userReducer from './slices/user.slice';
 import userFollowingReducer from './slices/following.slice';
 import userFavoriteEvents from './slices/favorite.slice';
+import userCity from './slices/city.slice';
 
 const rootReducer = combineReducers({
   user: userReducer,
   userFollowing: userFollowingReducer,
   userFavoriteEvents: userFavoriteEvents,
+  userCity: userCity,
 });
 
 const persistConfig = {

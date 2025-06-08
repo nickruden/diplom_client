@@ -1,6 +1,13 @@
 .ticketsWrapper {
   max-width: 1000px;
 
+  &.ticketCompleted {
+    opacity: 0.6;
+    filter: grayscale(100%);
+    pointer-events: auto;
+  }
+
+
 .ticket {
   display: flex;
   background: #FFF;
@@ -25,7 +32,7 @@
     .imageWrapper {
       flex: 0 0 240px;
       overflow: hidden;
-      max-height: 230px;
+      max-height: 250px;
     }
 
     .ticketInfo {

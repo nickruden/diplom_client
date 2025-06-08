@@ -4,14 +4,13 @@ import { Link } from "react-router-dom";
 import { Row, Col, Flex, Typography } from "antd";
 const { Title, Paragraph } = Typography;
 
-import { formatDate } from "../../utils/Date/formatDate";
+import { formatDate, formatTime, formatTimeRange } from "../../utils/Date/formatDate";
 import { getEventPrice } from "../../utils/Ticket/formatPrice";
 
 import { FaMapLocationDot } from "react-icons/fa6";
 import { MdCurrencyRuble } from "react-icons/md";
 
 import MyAvatar from "../Avatar/MyAvatar";
-
 
 import styles from "./EventCard.module.scss";
 import { useAuth } from "../../hooks/useAuth";
@@ -63,7 +62,7 @@ const EventCard = ({ data, noLinks, ...props }) => {
           )}
           <Flex vertical gap="5px" className={styles.eventCard__body}>
             <div className={styles.eventCard__timeStart}>
-              {formatDate(data.startTime, true)}
+              {formatDate(data.activeDate, {noNormalize: true})}
             </div>
             {noLinks ? (
               <Paragraph

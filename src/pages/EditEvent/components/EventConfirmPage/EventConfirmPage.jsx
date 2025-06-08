@@ -17,8 +17,9 @@ import {
   OrganizerLayout,
 } from "../../../../common/components";
 
+import dayjs from 'dayjs';
+
 import { EventConfirm } from "../../../../modules/EventConfirm";
-import dayjs from "dayjs";
 
 import styles from "./EventConfirmPage.module.scss";
 import Title from "antd/es/typography/Title";
@@ -40,7 +41,6 @@ const EventConfirmPage = () => {
   // хук работы с объектом формы мероприятия
   const { formData, handleInputChange, preparedData } =
     useUpdateEventForm(eventData);
-
     console.log(preparedData)
 
   useEffect(() => {
@@ -49,19 +49,14 @@ const EventConfirmPage = () => {
     }, 500);
   }, []);
 
-  const nowDate = new Date();
-
-  let isDateInPast;
+let isDateInPast = false;
 
   if (eventData) {
-    if (
-      formatTime(eventData.startTime, { showDate: true }) <
-      formatTime(nowDate, { showDate: true, noNormalize: true })
-    ) {
-      isDateInPast = true;
-    } else {
-      isDateInPast = false;
-    }
+    if (dayjs(eventData.startTime).isBefore(dayjs(), 'day')) {
+    isDateInPast = true;
+  } else {
+    isDateInPast = false;
+  }
   }
 
   const handleSaveButton = async () => {
@@ -123,9 +118,8 @@ const EventConfirmPage = () => {
                     Вы не заполнили билеты!
                   </Title>
                   <p style={{ fontSize: 16 }} className={styles.errorText}>
-                    Необходимо создать ходябы один вид
-                    билета! <br /> Eсли у вас бесплатное мероприятие, создайте билеты с
-                    нулевой ценой.
+                    Необходимо создать ходябы один вид билета! <br /> Eсли у вас
+                    бесплатное мероприятие, создайте билеты с нулевой ценой.
                   </p>
                 </Flex>
               )}
@@ -136,8 +130,7 @@ const EventConfirmPage = () => {
                     Дата мероприятия уже прошла!
                   </Title>
                   <p style={{ fontSize: 16 }} className={styles.errorText}>
-                    Чтобы опубликовать мероприятие,
-                    измените дату.
+                    Чтобы опубликовать мероприятие, измените дату.
                   </p>
                 </Flex>
               )}
