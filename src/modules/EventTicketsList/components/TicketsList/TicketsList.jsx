@@ -30,6 +30,7 @@ import styles from "./TicketsList.module.scss";
 import {
   formatDate,
   formatTime,
+  normalizeToUtcWithoutOffset,
 } from "../../../../common/utils/Date/formatDate";
 import { useEditEvent } from "../../../../common/API/services/events/hooks.api";
 import dayjs from "dayjs";
@@ -38,7 +39,9 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingTicket, setEditingTicket] = useState(null);
   const [mode, setMode] = useState(null);
-  const isCompletedEvent = eventData.status === "Завершено" ? true : false;
+  const isCompletedEvent = eventData.status !== "Завершено" ? false : true;
+
+  const now = new Date(Date.now());
 
   const { id } = useParams();
 
@@ -242,18 +245,22 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
                         <Col span={11}>
                           <Title level={5} className={styles.title}>
                             {ticket.name}
+                            {console.log(new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))), (new Date(normalizeToUtcWithoutOffset(dayjs(ticket.salesEnd)))), now)}
                           </Title>
-                          <Text type="secondary">
-                            <span style={{ color: "green", fontWeight: 600 }}>
-                              {" "}
-                              В продаже
-                            </span>{" "}
-                            • до{" "}
-                            {formatTime(ticket.salesEnd, {
-                              showDate: true,
-                              showYear: true,
-                            })}
-                          </Text>
+                          {isCompletedEvent || ((new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))) < now) || (new Date(normalizeToUtcWithoutOffset(dayjs(ticket.salesEnd))) < now)) ? (
+                            <Text type="secondary">Больше не продаётся</Text>
+                          ) : (
+                            <Text type="secondary">
+                              <span style={{ color: "green", fontWeight: 600 }}>
+                                В продаже
+                              </span>{" "}
+                              • до{" "}
+                              {formatTime(ticket.salesEnd, {
+                                showDate: true,
+                                showYear: true,
+                              })}
+                            </Text>
+                          )}
                         </Col>
                         <Col span={4}>
                           <Text>
@@ -272,58 +279,58 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
                       <Flex align="center">
                         <Col>
                           <MyDropdown
-                            menu={{
-                              items: [
-                                {
-                                  key: "copy",
-                                  label: "Копировать",
-                                  onClick: () => {
-                                    setEditingTicket(ticket);
-                                    setMode("copy");
-                                    setDrawerOpen(true);
-                                  },
+                            items={[
+                              {
+                                key: "copy",
+                                label: "Копировать",
+                                onClick: () => {
+                                  setEditingTicket(ticket);
+                                  setMode("copy");
+                                  setDrawerOpen(true);
                                 },
-                                {
-                                  key: "edit",
-                                  label: "Редактировать",
-                                  onClick: () => {
-                                    setEditingTicket(ticket);
-                                    setMode("edit");
-                                    setDrawerOpen(true);
-                                  },
+                              },
+                              {
+                                key: "edit",
+                                label: "Редактировать",
+                                onClick: () => {
+                                  setEditingTicket(ticket);
+                                  setMode("edit");
+                                  setDrawerOpen(true);
                                 },
-                                {
-                                  key: "delete",
-                                  label: "Удалить",
-                                  onClick: () => handleDeleteTicket(ticket.id),
-                                },
-                                {
-                                  key: "refand",
-                                  label: (
-                                    <Tooltip
-                                      title={
-                                        ticket.soldCount === 0 || isCompletedEvent
-                                          ? "Нет покупок для возврата или билет срок действия истёк"
-                                          : ""
-                                      }
+                              },
+                              {
+                                key: "delete",
+                                label: "Удалить",
+                                onClick: () => handleDeleteTicket(ticket.id),
+                              },
+                              {
+                                key: "refand",
+                                label: (
+                                  <Tooltip
+                                    title={
+                                      ticket.soldCount === 0 || isCompletedEvent || (ticket.validTo && new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))) < now)
+                                        ? "Нет покупок для возврата или срок действия билета истёк"
+                                        : ""
+                                    }
+                                  >
+                                    <span
+                                      style={{
+                                        color:
+                                          ticket.soldCount === 0 ||
+                                          isCompletedEvent || (ticket.validTo && new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))) < now)
+                                            ? "#ccc"
+                                            : undefined,
+                                      }}
                                     >
-                                      <span
-                                        style={{
-                                          color:
-                                            ticket.soldCount === 0
-                                              ? "#ccc"
-                                              : undefined,
-                                        }}
-                                      >
-                                        Вернуть все
-                                      </span>
-                                    </Tooltip>
-                                  ),
-                                  onClick: () => handleRefundTicket(ticket.id),
-                                  disabled: ticket.soldCount === 0 || isCompletedEvent,
-                                },
-                              ],
-                            }}
+                                      Вернуть все
+                                    </span>
+                                  </Tooltip>
+                                ),
+                                onClick: () => handleRefundTicket(ticket.id),
+                                disabled:
+                                  ticket.soldCount === 0 || isCompletedEvent || (ticket.validTo && new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))) < now),
+                              },
+                            ]}
                             trigger={["click"]}
                             className={styles.settingsButton}
                           >
@@ -349,7 +356,7 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
                   className={styles.inner}
                   onClick={() => {
                     setEditingTicket(ticket);
-                    setMode("edit")
+                    setMode("edit");
                     setDrawerOpen(true);
                   }}
                 >
@@ -358,17 +365,21 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
                     <Title level={5} className={styles.title}>
                       {ticket.name}
                     </Title>
-                    <Text type="secondary">
-                      <span style={{ color: "green", fontWeight: 600 }}>
-                        {" "}
-                        В продаже
-                      </span>{" "}
-                      • до{" "}
-                      {formatTime(ticket.salesEnd, {
-                        showDate: true,
-                        showYear: true,
-                      })}
-                    </Text>
+                    {console.log(dayjs(ticket.validTo), now)}
+                    {isCompletedEvent || ((new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))) < now) || (new Date(normalizeToUtcWithoutOffset(dayjs(ticket.salesEnd))) < now)) ? (
+                      <Text type="secondary">Больше не продаётся</Text>
+                    ) : (
+                      <Text type="secondary">
+                        <span style={{ color: "green", fontWeight: 600 }}>
+                          В продаже
+                        </span>{" "}
+                        • до{" "}
+                        {formatTime(ticket.salesEnd, {
+                          showDate: true,
+                          showYear: true,
+                        })}
+                      </Text>
+                    )}
                   </Col>
                   <Col span={4}>
                     <Text>
@@ -403,7 +414,7 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
                             label: "Редактировать",
                             onClick: () => {
                               setEditingTicket(ticket);
-                              setMode("edit")
+                              setMode("edit");
                               setDrawerOpen(true);
                             },
                           },
@@ -417,15 +428,15 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
                             label: (
                               <Tooltip
                                 title={
-                                  ticket.soldCount === 0
-                                    ? "Нет покупок для возврата"
+                                  ticket.soldCount === 0 || isCompletedEvent || (new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))) < now)
+                                    ? "Нет покупок для возврата или билет больше не действителен"
                                     : ""
                                 }
                               >
                                 <span
                                   style={{
                                     color:
-                                      ticket.soldCount === 0
+                                      ticket.soldCount === 0 || isCompletedEvent || (new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))) < now)
                                         ? "#ccc"
                                         : undefined,
                                   }}
@@ -435,7 +446,8 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
                               </Tooltip>
                             ),
                             onClick: () => handleRefundTicket(ticket.id),
-                            disabled: ticket.soldCount === 0,
+                            disabled:
+                              ticket.soldCount === 0 || isCompletedEvent || (new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))) < now),
                           },
                         ],
                       }}

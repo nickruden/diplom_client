@@ -10,7 +10,7 @@ export const groupTicketsByValidity = (tickets) => {
     const toEndSalesDate = normalizeToUtcWithoutOffset(dayjs(ticket.salesEnd));
     const toDate = dayjs(ticket.validTo);
 
-    if (toEndSalesDate.isBefore(now)) {
+    if (toEndSalesDate.isBefore(now) || toDate.isBefore(now)) {
       return;
     }
 

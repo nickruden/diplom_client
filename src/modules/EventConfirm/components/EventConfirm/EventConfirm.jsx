@@ -15,6 +15,7 @@ import EventCard from "../../../../common/components/EventCard/EventCard";
 import styles from "./EventConfirm.module.scss";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
+import { normalizeToUtcWithoutOffset } from "../../../../common/utils/Date/formatDate";
 
 const EventPublishPage = ({ handleInputChange, eventData }) => {
   const [refundAllowed, setRefundAllowed] = useState(
@@ -27,7 +28,7 @@ const EventPublishPage = ({ handleInputChange, eventData }) => {
   );
   const [selectedTariff, setSelectedTariff] = useState(eventData.isPrime);
 
-  const daysUntilStart = dayjs(eventData.startTime).diff(dayjs(), "day");
+  const daysUntilStart = normalizeToUtcWithoutOffset(dayjs(eventData.startTime)).diff(dayjs(), "day");
   const isFreeEvent = !eventData?.tickets?.some((t) => t.price > 0);
 
   useEffect(() => {
@@ -38,7 +39,6 @@ const EventPublishPage = ({ handleInputChange, eventData }) => {
       setAutoConfirmRefund(true);
       setRefundDays(0);
       handleInputChange("isAutoRefund", true);
-      console.log(eventData.endTime)
       handleInputChange("refundDate", dayjs(eventData.endTime));
       return;
     }

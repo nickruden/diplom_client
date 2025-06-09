@@ -23,7 +23,7 @@ import { EventConfirm } from "../../../../modules/EventConfirm";
 
 import styles from "./EventConfirmPage.module.scss";
 import Title from "antd/es/typography/Title";
-import { formatTime } from "../../../../common/utils/Date/formatDate";
+import { formatTime, normalizeToUtcWithoutOffset } from "../../../../common/utils/Date/formatDate";
 
 const EventConfirmPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -41,7 +41,6 @@ const EventConfirmPage = () => {
   // хук работы с объектом формы мероприятия
   const { formData, handleInputChange, preparedData } =
     useUpdateEventForm(eventData);
-    console.log(preparedData)
 
   useEffect(() => {
     setTimeout(() => {
@@ -49,10 +48,10 @@ const EventConfirmPage = () => {
     }, 500);
   }, []);
 
-let isDateInPast = false;
+  let isDateInPast = false;
 
   if (eventData) {
-    if (dayjs(eventData.startTime).isBefore(dayjs(), 'day')) {
+    if (normalizeToUtcWithoutOffset(dayjs(eventData.endTime)).isBefore(dayjs(), 'day')) {
     isDateInPast = true;
   } else {
     isDateInPast = false;
