@@ -29,7 +29,7 @@ import { MdOutlinePayment } from "react-icons/md";
 
 const { Title, Text, Paragraph } = Typography;
 
-const CartModal = ({ tickets, eventData }) => {
+const CartModal = ({ tickets, eventData, isMultiDayEvent }) => {
   const { user } = useAuth();
 
   const [rows, setRows] = useState(1);
@@ -96,6 +96,7 @@ const CartModal = ({ tickets, eventData }) => {
           price: ticket.price,
           validFrom: ticket.validFrom,
           validTo: ticket.validTo,
+          refundDateCount: ticket.refundDateCount,
         }));
 
         await confirmPayment({ idBuyer: user.id, tickets: ticketsToBuy });
@@ -115,6 +116,7 @@ const CartModal = ({ tickets, eventData }) => {
         price: ticket.price,
         validFrom: ticket.validFrom,
         validTo: ticket.validTo,
+        refundDateCount: ticket.refundDateCount,
       }));
 
       if (finalTotal === 0) {
@@ -240,12 +242,14 @@ const CartModal = ({ tickets, eventData }) => {
                     {eventData.name}
                   </Title>
                 </Paragraph>
+                {!isMultiDayEvent ?
                 <Text type="secondary" className={styles.eventDate}>
                   {formatTimeRange(eventData.startTime, eventData.endTime, {
                     showYear: false,
                     showWeekday: true,
+                    noNormalize: true,
                   })}
-                </Text>
+                </Text> : ''}
               </div>
             </div>
 
@@ -263,12 +267,14 @@ const CartModal = ({ tickets, eventData }) => {
                     <Flex align="center" gap={5} className={styles.ticketName}>
                       <IoTicketOutline /> {ticket.name}
                     </Flex>
+                    {isMultiDayEvent ? 
                     <div style={{ fontSize: "12px", color: "#888", marginTop: 2 }}>
                       {formatTimeRange(ticket.validFrom, ticket.validTo, {
                         showYear: false,
                         showWeekday: true,
+                        noNormalize: true,
                       })}
-                    </div>
+                    </div> : ''}
                   </div>
                   <div className={styles.ticketPrice}>
                     {ticketCounts[ticket.id]} x {ticket.price}₽

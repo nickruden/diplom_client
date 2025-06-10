@@ -13,54 +13,49 @@ import { MdAccessTime } from "react-icons/md";
 import EventCard from "../../../../common/components/EventCard/EventCard";
 
 import styles from "./EventConfirm.module.scss";
-import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { normalizeToUtcWithoutOffset } from "../../../../common/utils/Date/formatDate";
 
 const EventPublishPage = ({ handleInputChange, eventData }) => {
-  const [refundAllowed, setRefundAllowed] = useState(
-    eventData?.isRefundAllowed ?? false
-  );
-  const [refundDays, setRefundDays] = useState(1);
+  const [refundAllowed, setRefundAllowed] = useState(eventData?.refundDateCount ? true : false);
+  
+  const [refundDays, setRefundDays] = useState(eventData?.refundDateCount || 1);
 
   const [autoConfirmRefund, setAutoConfirmRefund] = useState(
     eventData?.isAutoRefund ?? false
   );
   const [selectedTariff, setSelectedTariff] = useState(eventData.isPrime);
 
-  const daysUntilStart = normalizeToUtcWithoutOffset(dayjs(eventData.startTime)).diff(dayjs(), "day");
+  const daysUntilEnd = normalizeToUtcWithoutOffset(dayjs(eventData.endTime)).isBefore(dayjs(), 'day');
   const isFreeEvent = !eventData?.tickets?.some((t) => t.price > 0);
 
   useEffect(() => {
-    const isLate = daysUntilStart <= 1;
-
-    if (isFreeEvent) {
+    if (isFreeEvent) {  
       setRefundAllowed(true);
       setAutoConfirmRefund(true);
       setRefundDays(0);
       handleInputChange("isAutoRefund", true);
-      handleInputChange("refundDate", dayjs(eventData.endTime));
+      handleInputChange("refundDateCount", 1);
       return;
     }
 
-    if (isLate) {
+    if (daysUntilEnd) {
       setRefundAllowed(false);
       setAutoConfirmRefund(false);
       handleInputChange("isAutoRefund", false);
-      const created = dayjs(eventData.createdAt).subtract(1, "day");
-      handleInputChange("refundDate", created);
+      handleInputChange("refundDateCount", 0);
       return;
     }
 
     // если возврат разрешён и не бесплатное
     if (refundAllowed) {
+      console.log("Normal refund handling");
+
       const days = refundDays ?? 1;
-      const newRefundDate = dayjs(eventData.endTime).subtract(days, "day");
-      handleInputChange("refundDate", newRefundDate);
+      handleInputChange("refundDateCount", days);
       handleInputChange("isAutoRefund", autoConfirmRefund);
     } else {
-      const previousDate = dayjs(eventData.createdAt).subtract(1, "day");
-      handleInputChange("refundDate", previousDate);
+      handleInputChange("refundDateCount", 0);
       handleInputChange("isAutoRefund", false);
     }
   }, [
@@ -69,7 +64,7 @@ const EventPublishPage = ({ handleInputChange, eventData }) => {
     autoConfirmRefund,
     eventData,
     isFreeEvent,
-    daysUntilStart,
+    daysUntilEnd
   ]);
 
   return (
@@ -148,7 +143,6 @@ const EventPublishPage = ({ handleInputChange, eventData }) => {
                     { label: "Разрешить возврат", value: true },
                   ]}
                   optionType="button"
-                  disabled={daysUntilStart <= 1}
                 />
               </Flex>
 
@@ -156,40 +150,16 @@ const EventPublishPage = ({ handleInputChange, eventData }) => {
                 <Flex vertical gap={20}>
                   <Flex vertical gap={15} className={styles.refundDays}>
                     <Text className={styles.grayText}>
-                      За сколько дней до начала мероприятия <br /> можно вернуть
+                      За сколько дней до начала <br /> можно вернуть
                       билет? (1 - 30)
-                    </Text>
-                    <Text className={styles.grayText}>
-                      Максимальное значение для вашего мероприятия{" "}
-                      <span style={{ color: "#000" }}>
-                        {Math.min(
-                          30,
-                          dayjs(eventData.endTime).diff(dayjs(), "day") - 1
-                        )}{" "}
-                        дней
-                      </span>
                     </Text>
                     <InputNumber
                       placeholder="Дней до окончания события"
                       min={1}
-                      max={Math.max(
-                        1,
-                        dayjs(eventData.endTime).diff(dayjs(), "day") - 1
-                      )}
+                      max={30}
                       value={refundDays}
-                      onChange={(value) => {
-                        const maxDays =
-                          dayjs(eventData.endTime).diff(dayjs(), "day") - 1;
-                        setRefundDays(Math.min(value, maxDays));
-                      }}
+                      onChange={(value) => { setRefundDays(value); }}
                     />
-
-                    <Text style={{ color: "red" }}>
-                      Люди смогут вернуть билеты до{" "}
-                      {dayjs(eventData.endTime)
-                        .subtract(refundDays, "day")
-                        .format("DD.MM.YYYY")}
-                    </Text>
                   </Flex>
                 </Flex>
               )}
@@ -203,7 +173,7 @@ const EventPublishPage = ({ handleInputChange, eventData }) => {
               </Flex>
               <Text className={styles.grayText} style={{ lineHeight: 1.5 }}>
                 Для бесплатных мероприятий возврат билетов <br></br> разрешён
-                автоматически до окончания события.
+                автоматически до окончания действия билета.
               </Text>
             </Flex>
           )}

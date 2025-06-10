@@ -65,7 +65,10 @@ export const EventPage = () => {
     return groupTicketsByValidity(ticketsData?.tickets || []);
   }, [ticketsData]);
 
+  console.log(ticketsData)
+
   const { mutate: updateEventViews } = useEditEvent();
+  const isMultiDayEvent = formatDate(eventData?.startTime, { noNormalize: true, }) !== formatDate(eventData?.endTime, { noNormalize: true, }) ? true : false;
 
   useEffect(() => {
     if (eventSuccess && user?.id !== eventData?.organizerId) {
@@ -87,7 +90,7 @@ export const EventPage = () => {
           title="Данные потерялись, но мы обязательно их найдём"
           image={<FaRegSadTear size={120} />}
         />
-      ) : eventData.status === "Черновик" ? (
+      ) : eventData.status === "Черновик" && user?.id !== eventData.organizerId ? (
         <MyEmpty
           title="Пользователь снял с публикации данное мероприятие"
           image={<FaRegSadTear size={120} />}
@@ -178,6 +181,7 @@ export const EventPage = () => {
                         noNormalize: true,
                       })}
                     </Flex>
+                    {!isMultiDayEvent ?
                     <Flex
                       align="center"
                       gap="15px"
@@ -188,7 +192,7 @@ export const EventPage = () => {
                         eventData.startTime,
                         eventData.endTime
                       )}
-                    </Flex>
+                    </Flex> : ""}
                   </Flex>
                 </div>
                 <div className={styles.refound}>
@@ -196,7 +200,7 @@ export const EventPage = () => {
                     Политика возврата билетов
                   </Title>
                   <Flex className={styles.refoundBody}>
-                    {!eventData.refundDate ? (
+                    {!eventData.refundDateCount ? (
                       <Flex
                         align="center"
                         gap="15px"
@@ -213,8 +217,8 @@ export const EventPage = () => {
                         className={styles.refoundText}
                       >
                         {" "}
-                        <BsCashCoin /> Возврат средств действует до -{" "}
-                        {formatDate(eventData.refundDate)}
+                        <BsCashCoin /> Вернуть средства можно за {" "}
+                        {eventData.refundDateCount} дня\дней до начала действия билета
                       </Flex>
                     )}
                   </Flex>
@@ -339,6 +343,7 @@ export const EventPage = () => {
                   eventData={eventData}
                   ticktesRef={refTickets}
                   ticketsData={ticketsData}
+                  isMultiDayEvent={isMultiDayEvent}
                 />
               </Affix>
             </Flex>

@@ -57,9 +57,9 @@ const TicketCard = ({ purchase, refetchPurchase, isEventCompleted }) => {
       className={`${styles.ticketsWrapper} ${isEventCompleted ? styles.ticketCompleted : ""}`}
     >
       <Flex justify="space-between" align="center">
-        {eventInfo.refundDate && !isEventCompleted ? (
+        {purchase.refundDeadline && !isEventCompleted ? (
           <Text type="secondary" style={{ fontSize: 18, fontStyle: "italic" }}>
-            Возврат возможен до: {formatDate(eventInfo.refundDate)}
+            Возврат возможен до: {formatDate(purchase.refundDeadline)}
           </Text>
         ) : (
           <Text type="danger" style={{ fontSize: 18, fontStyle: "italic" }}>
@@ -73,7 +73,7 @@ const TicketCard = ({ purchase, refetchPurchase, isEventCompleted }) => {
             style={{ fontSize: "16px" }}
             onClick={handleRefund}
             loading={isLoading}
-            disabled={!eventInfo.refundDate || isEventCompleted}
+            disabled={!purchase.refundDeadline || isEventCompleted}
           >
             <MdDeleteOutline /> Вернуть билет
           </MyButton>

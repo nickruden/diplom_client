@@ -85,38 +85,50 @@ const EventManagementPage = () => {
     return matchesStatus && matchesSearch;
   });
 
-const handleUpdateStatus = async ({ id, data }) => {
-  setLoadingEventId(id);
+  const handleUpdateStatus = async ({ id, data }) => {
+    setLoadingEventId(id);
 
-  try {
-    const event = eventsList?.find((e) => e.id === id);
+    try {
+      const event = eventsList?.find((e) => e.id === id);
 
-    const isUnpublishing = event?.status === "Опубликовано" && data === "Черновик";
-    const hasPurchases = event?.tickets?.some(ticket => ticket.purchases?.length > 0);
+      const isUnpublishing = data === "Черновик" ? true : false;
 
-    if (isUnpublishing && hasPurchases) {
-      Modal.info({
-        title: "У мероприятия есть купленные билеты",
-        content: (
-          <div>
-            <p>Если не опубликовать мероприятие,</p>
-            <p>средства вернутся пользователям автоматически за 1 день до его завершения.</p>
-          </div>
-        ),
-        okText: "Понятно",
-        onOk: async () => {
-          await updateStatus({ id, data: { status: data } });
-          await eventsListRefetch();
-        },
-      });
-    } else {
-      await updateStatus({ id, data: { status: data } });
-      await eventsListRefetch();
+      const hasPurchases = event?.tickets?.some(
+        (ticket) => ticket.purchases?.length > 0
+      );
+
+      if (isUnpublishing && hasPurchases) {
+        await new Promise((resolve) => {
+          Modal.info({
+            title: "У мероприятия есть купленные билеты",
+            content: (
+              <div>
+                <p>Если не опубликовать мероприятие,</p>
+                <p>
+                  средства вернутся пользователям автоматически за 1 день до его
+                  начала.
+                </p>
+              </div>
+            ),
+            okText: "Понятно",
+            onOk: async () => {
+            try {
+              await updateStatus({ id, data: { status: data } });
+              await eventsListRefetch();
+            } finally {
+              resolve();
+            }
+          },
+          });
+        });
+      } else if (isUnpublishing) {
+        await updateStatus({ id, data: { status: data } });
+        await eventsListRefetch();
+      }
+    } finally {
+      setLoadingEventId(null);
     }
-  } finally {
-    setLoadingEventId(null);
-  }
-};
+  };
 
   const handleDeleteEvent = async (event) => {
     const hasPurchases =
@@ -172,8 +184,8 @@ const handleUpdateStatus = async ({ id, data }) => {
     Modal.confirm({
       title: "Удалить мероприятие?",
       content:
-        "Перед удалением необходимо перевести мероприятие в черновики. Продолжить?",
-      okText: "Перевести в черновики",
+        "Перед удалением необходимо перевести мероприятие в черновик. Продолжить?",
+      okText: "Перевести в черновик",
       cancelText: "Отмена",
       okButtonProps: { danger: true },
       onOk: async () => {

@@ -8,6 +8,7 @@ import Title from 'antd/es/typography/Title';
 const TicketCard = ({ ticket, count, onIncrement, onDecrement, ...props }) => {
   const remainingTickets = ticket.count - ticket.soldCount;
   const isDisabled = ticket.isSoldOut || remainingTickets <= 0;
+  console.log(ticket, isDisabled)
   const maxReached = count >= remainingTickets;
 
   return (

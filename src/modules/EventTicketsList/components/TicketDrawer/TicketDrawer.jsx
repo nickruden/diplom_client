@@ -66,7 +66,8 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket, eventData, mode }) => {
       const start = dayjs(ticket.salesStart);
       const end = dayjs(ticket.salesEnd);
       const validFrom = dayjs(ticket.validFrom);
-      const validTo = dayjs(ticket.validTo);
+      const validTo = normalizeToUtcWithoutOffset(dayjs(ticket.validTo));
+      console.log(validFrom, normalizeToUtcWithoutOffset(validTo))
 
       form.setFieldsValue({
         name: ticket.name,

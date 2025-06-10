@@ -48,6 +48,8 @@ const EventConfirmPage = () => {
     }, 500);
   }, []);
 
+  console.log(preparedData)
+
   let isDateInPast = false;
 
   if (eventData) {

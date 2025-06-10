@@ -66,6 +66,10 @@ export const useRefundTickets = () => {
         queryKey: ["get_all_event_tickets"],
         exact: false,
       });
+      queryClient.invalidateQueries({
+        queryKey: ["get_event_by_id"],
+        exact: false,
+      });
     },
   });
 };

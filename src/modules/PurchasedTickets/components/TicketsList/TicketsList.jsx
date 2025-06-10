@@ -29,8 +29,6 @@ const TicketsList = () => {
     return true;
   });
 
-  console.log(ticketsData)
-
 
   return (
     <div className={styles.ticketsPage}>

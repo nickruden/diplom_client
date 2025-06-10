@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../common/hooks/useAuth";
 
 
-const TicketsAside = ({ userId, eventData, ticktesRef, ticketsData }) => {
+const TicketsAside = ({ userId, eventData, ticktesRef, ticketsData, isMultiDayEvent }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -117,7 +117,7 @@ const TicketsAside = ({ userId, eventData, ticktesRef, ticketsData }) => {
           </Card>
         </Affix>
       </div>
-      <CartModal tickets={ticketsData.tickets} eventData={eventData} />
+      <CartModal tickets={ticketsData?.tickets} eventData={eventData} isMultiDayEvent={isMultiDayEvent} />
     </>
   );
 };

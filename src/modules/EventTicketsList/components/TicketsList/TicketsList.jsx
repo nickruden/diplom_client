@@ -41,7 +41,7 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
   const [mode, setMode] = useState(null);
   const isCompletedEvent = eventData.status !== "Завершено" ? false : true;
 
-  const now = new Date(Date.now());
+  const now = dayjs();
 
   const { id } = useParams();
 
@@ -162,7 +162,6 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
       groups[key].push(ticket);
     });
 
-    console.log(groups);
     return groups;
   };
 
@@ -245,7 +244,6 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
                         <Col span={11}>
                           <Title level={5} className={styles.title}>
                             {ticket.name}
-                            {console.log(new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))), (new Date(normalizeToUtcWithoutOffset(dayjs(ticket.salesEnd)))), now)}
                           </Title>
                           {isCompletedEvent || ((new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))) < now) || (new Date(normalizeToUtcWithoutOffset(dayjs(ticket.salesEnd))) < now)) ? (
                             <Text type="secondary">Больше не продаётся</Text>
@@ -365,7 +363,6 @@ const TicketsPage = ({ refetchEventData, eventData }) => {
                     <Title level={5} className={styles.title}>
                       {ticket.name}
                     </Title>
-                    {console.log(dayjs(ticket.validTo), now)}
                     {isCompletedEvent || ((new Date(normalizeToUtcWithoutOffset(dayjs(ticket.validTo))) < now) || (new Date(normalizeToUtcWithoutOffset(dayjs(ticket.salesEnd))) < now)) ? (
                       <Text type="secondary">Больше не продаётся</Text>
                     ) : (
