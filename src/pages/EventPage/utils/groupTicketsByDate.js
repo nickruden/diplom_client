@@ -36,5 +36,19 @@ export const groupTicketsByValidity = (tickets) => {
     groups[key].push(ticket);
   });
 
-  return groups;
+  // Преобразуем объект в массив пар [ключ, значение] для сортировки
+  const sortedEntries = Object.entries(groups).sort((a, b) => {
+    // Берем первый билет из группы для сравнения дат
+    const dateA = dayjs(a[1][0].validFrom);
+    const dateB = dayjs(b[1][0].validFrom);
+    return dateA.diff(dateB);
+  });
+
+  // Преобразуем отсортированный массив обратно в объект
+  const sortedGroups = {};
+  sortedEntries.forEach(([key, value]) => {
+    sortedGroups[key] = value;
+  });
+
+  return sortedGroups;
 };
