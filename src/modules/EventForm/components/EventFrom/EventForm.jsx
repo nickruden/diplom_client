@@ -32,8 +32,9 @@ import styles from "./EventForm.module.scss";
 import { useDeleteImage } from "../../../../common/API/services/events/hooks.api";
 import MyButton from "../../../../common/components/UI/Button/MyButton";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { normalizeToUtcWithoutOffset } from "../../../../common/utils/Date/formatDate";
 
 const EventInfo = ({
   formData,
@@ -60,6 +61,22 @@ const EventInfo = ({
     deleteImage({ publicId: img.publicId });
   };
 
+  // Вычисляем массив занятых дат (по проданным или созданным билетам)
+  const busyDates = useMemo(() => {
+    const dates = new Set();
+    eventData?.tickets?.forEach((ticket) => {
+      if (ticket.validFrom) {
+        const date = normalizeToUtcWithoutOffset(
+          dayjs(ticket.validFrom)
+        ).format("YYYY-MM-DD");
+        console.log(date);
+        dates.add(date);
+      }
+    });
+    return dates;
+  }, [eventData]);
+
+  // Добавление нового дня — пустой и редактируемый
   const addEmptyDay = () => {
     const current = JSON.parse(formData.dailySchedule || "[]");
     current.push({ date: null, startTime: null, endTime: null });
@@ -408,54 +425,90 @@ const EventInfo = ({
                     {formData.hasIndividualSchedule && (
                       <Flex vertical style={{ marginTop: 16 }}>
                         {JSON.parse(formData.dailySchedule || "[]").map(
-                          (entry, id) => (
-                            <Flex
-                              key={id}
-                              gap={16}
-                              align="center"
-                              style={{ marginBottom: 8 }}
-                            >
-                              <MyDateTimePicker
-                                placeholder="Дата"
-                                value={entry.date ? dayjs(entry.date) : null}
-                                onChange={(val) =>
-                                  updateDailySchedule(id, "date", val)
-                                }
-                                disabled={hasTickets}
-                              />
-                              <MyDateTimePicker
-                                placeholder="Начало"
-                                type="time"
-                                value={
-                                  entry.startTime
-                                    ? dayjs(entry.startTime)
-                                    : null
-                                }
-                                onChange={(val) =>
-                                  updateDailySchedule(id, "startTime", val)
-                                }
-                                disabled={hasTickets}
-                              />
-                              <MyDateTimePicker
-                                placeholder="Конец"
-                                type="time"
-                                value={
-                                  entry.endTime ? dayjs(entry.endTime) : null
-                                }
-                                onChange={(val) =>
-                                  updateDailySchedule(id, "endTime", val)
-                                }
-                                disabled={hasTickets}
-                              />
+                          (entry, id) => {
+                            const entryDate = entry.date
+                              ? dayjs(entry.date).format("YYYY-MM-DD")
+                              : null;
+                            const isBusy =
+                              entryDate && busyDates.has(entryDate);
 
-                              <MyButton
-                                type="danger"
-                                onClick={() => removeDay(id)}
+                            return (
+                              <Flex
+                                key={id}
+                                gap={16}
+                                align="center"
+                                style={{ marginBottom: 8 }}
                               >
-                                Удалить
-                              </MyButton>
-                            </Flex>
-                          )
+                                <MyDateTimePicker
+                                  placeholder="Дата"
+                                  value={entry.date ? dayjs(entry.date) : null}
+                                  onChange={(val) =>
+                                    updateDailySchedule(id, "date", val)
+                                  }
+                                  disabled={isBusy}
+                                  disabledDate={(currentDate) => {
+                                    const dateStr =
+                                      dayjs(currentDate).format("YYYY-MM-DD");
+
+                                    const isPast = currentDate.isBefore(
+                                      dayjs().startOf("day")
+                                    ); // 🔒 Вчера и раньше
+
+                                    const isAlreadyUsed = JSON.parse(
+                                      formData.dailySchedule || "[]"
+                                    ).some((item, index) => {
+                                      if (!item.date || index === id)
+                                        return false; // Пропускаем текущую строку
+                                      return (
+                                        dayjs(item.date).format(
+                                          "YYYY-MM-DD"
+                                        ) === dateStr
+                                      );
+                                    });
+
+                                    const isBusyGlobally =
+                                      busyDates.has(dateStr); // Уже есть билеты
+
+                                    return (
+                                      isPast || isAlreadyUsed || isBusyGlobally
+                                    );
+                                  }}
+                                />
+                                <MyDateTimePicker
+                                  placeholder="Начало"
+                                  type="time"
+                                  value={
+                                    entry.startTime
+                                      ? dayjs(entry.startTime)
+                                      : null
+                                  }
+                                  onChange={(val) =>
+                                    updateDailySchedule(id, "startTime", val)
+                                  }
+                                  disabled={isBusy}
+                                />
+                                <MyDateTimePicker
+                                  placeholder="Конец"
+                                  type="time"
+                                  value={
+                                    entry.endTime ? dayjs(entry.endTime) : null
+                                  }
+                                  onChange={(val) =>
+                                    updateDailySchedule(id, "endTime", val)
+                                  }
+                                  disabled={isBusy}
+                                />
+
+                                <MyButton
+                                  type="danger"
+                                  onClick={() => removeDay(id)}
+                                  disabled={isBusy}
+                                >
+                                  Удалить
+                                </MyButton>
+                              </Flex>
+                            );
+                          }
                         )}
 
                         {formErrors.dailySchedule && (

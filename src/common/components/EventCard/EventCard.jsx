@@ -22,6 +22,7 @@ const EventCard = ({ data, noLinks, ...props }) => {
   const { user }= useAuth();
 
   const priceInfo = getEventPrice(data.tickets);
+  console.log(data)
 
   return (
     <div className={styles.eventCard} {...props}>
@@ -62,7 +63,7 @@ const EventCard = ({ data, noLinks, ...props }) => {
           )}
           <Flex vertical gap="5px" className={styles.eventCard__body}>
             <div className={styles.eventCard__timeStart}>
-              {formatDate(data.activeDate, {noNormalize: true})}
+              {formatDate(data.activeDate, {noNormalize: false})}
             </div>
             {noLinks ? (
               <Paragraph

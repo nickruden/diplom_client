@@ -27,9 +27,7 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket, eventData, mode }) => {
   const [fixedTimeStart, setFixedTimeStart] = useState("");
   const [fixedTimeEnd, setFixedTimeEnd] = useState("");
 
-  const isOneDayEvent =
-    eventData &&
-    formatDate(eventData.startTime) === formatDate(eventData.endTime);
+  const isOneDayEvent = eventData.dailySchedule === "[]" ? true : false;  
 
   useEffect(() => {
     if (eventData) {
