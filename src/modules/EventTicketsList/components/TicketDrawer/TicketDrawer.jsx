@@ -63,6 +63,7 @@ const TicketDrawer = ({ open, onClose, onSubmit, ticket, eventData, mode }) => {
       // Заполняем форму для редактирования
       const start = dayjs(ticket.salesStart);
       const end = dayjs(ticket.salesEnd);
+      console.log(start, end)
       const validFrom = normalizeToUtcWithoutOffset(dayjs(ticket.validFrom));
       const validTo = normalizeToUtcWithoutOffset(dayjs(ticket.validTo));
 
