@@ -1,0 +1,1 @@
+export { default as BigBanner } from './components/BigBanner/BigBanner'

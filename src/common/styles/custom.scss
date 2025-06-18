@@ -1,0 +1,35 @@
+img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+hr {
+    margin: 10px 0px;
+    height: 1px;
+    background-color: hsla(0, 0%, 50.2%, .2);
+}
+
+.swiper-pagination {
+    position: absolute;
+    z-index: 10;
+  }
+  
+  .swiper-pagination-bullet {
+    background: #FFF!important;
+    opacity: 1;
+  }
+  
+  .swiper-pagination-bullet-active {
+    background: #68819c!important;
+  }
+
+  .my-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+  }

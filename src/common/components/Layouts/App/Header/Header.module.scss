@@ -1,0 +1,148 @@
+.header {
+    box-shadow: 4px 0px 5px 0px rgba(149, 149, 149, 0.492);
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    background-color: #FFF;
+    
+    &__container {
+        padding: 10px 50px;
+    }
+
+    &__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__leftContent {
+        display: flex;
+        align-items: center;
+    }
+
+    &__logo {
+        display: block;
+        max-width: 160px;
+    }
+
+    &__menu {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        &Link {
+            color: #39364f;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 10px 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            border-radius: 100px;
+        }
+
+        &Link:hover {
+            color: #39364f;
+            background-color: #f4f4f4;
+        }
+
+        &Button {
+            color: #39364f;
+        }
+
+        &Button:hover {
+            color: #8e929f !important;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+
+        .createButton {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-weight: 600;
+            color: #39364f;
+            padding: 5px 15px 5px 10px;
+            border-radius: 100px;
+            background-color: #d4d4d4a9;
+
+            &:hover {
+                background-color: #ccccccc1;
+            }
+        }
+
+        .notifications {
+            margin-right: 10px;
+        }
+
+        .loginButton {
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: #39364f;
+            padding: 10px 20px;
+            border-radius: 10px;
+            gap: 7px;
+
+            &:hover {
+                background-color: rgba(239, 239, 239, 0.795);
+            }
+        }
+
+        .userDropdown {
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+            z-index: 1100;
+
+            &:hover {
+                background-color: #f5f5f5;
+            }
+        }
+
+        .userAvatar {
+            background-color: #1890ff;
+            color: white;
+        }
+
+        .userName {
+            font-weight: 500;
+        }
+    }
+}
+
+.notificationDropdown {
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #fff;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 8px;
+  }
+  
+  .notificationDropdownOverlay {
+    .ant-tabs-nav {
+      margin-bottom: 0;
+    }
+  
+    .ant-list-item {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+  
+    .ant-list-item:hover {
+      background-color: #f5f5f5;
+    }
+  }
+  

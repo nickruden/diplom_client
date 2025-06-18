@@ -1,0 +1,1 @@
+export { default as FolowingPage } from './components/FolowingPage/FolowingPage';

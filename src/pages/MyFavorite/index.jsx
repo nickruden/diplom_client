@@ -1,0 +1,1 @@
+export { default as MyFavoritePage } from './components/MyFavoritePage'

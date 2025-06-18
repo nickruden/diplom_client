@@ -1,0 +1,86 @@
+.loginWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+
+  .loginCard {
+    display: flex;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 1200px;
+    width: 100%;
+
+
+    .imageSide {
+      flex: 1;
+      background: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .formSide {
+      flex: 1;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      .title {
+        font-size: 24px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #000;
+      }
+
+      .form {
+        .formItem {
+          margin-bottom: 10px;
+
+          .inputField {
+            background: #eaeaea;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+
+            input {
+              background: transparent;
+              border: none;
+            }
+          }
+        }
+      }
+
+      .loginButton {
+        border-radius: 30px;
+        font-weight: bold;
+        padding: 15px 10px;
+        margin: 30px 0px;
+        width: 100%;
+      }
+
+      .links {
+        text-align: center;
+        font-size: 14px;
+
+        a {
+          color: #000000;
+          font-weight: 500;
+
+          &:hover {
+            color: #00a244;
+          }
+        }
+
+        .createLink {
+          display: inline-block;
+          margin-top: 0.5rem;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+.custom-checkbox {
+    font-size: 14px;
+  
+    .ant-checkbox-inner {
+      border: 1px solid black !important;
+      border-radius: 4px;
+      width: 18px;
+      height: 18px;
+    }
+  
+    .ant-checkbox-checked .ant-checkbox-inner {
+      background-color: rgb(88, 88, 88) !important;
+      border-color: rgb(88, 88, 88) !important;
+    }
+  
+    .ant-checkbox-input:focus + .ant-checkbox-inner {
+      box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
+    }
+  
+    &:hover .ant-checkbox-inner {
+      border-color: black !important;
+    }
+  }
+  

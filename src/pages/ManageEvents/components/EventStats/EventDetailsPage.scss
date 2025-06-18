@@ -1,0 +1,148 @@
+.eventDetailsPage {
+    padding-bottom: 60px;
+
+    .event-header-actions {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    .eventInfoCard {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+      
+        .eventInfoCard__status {
+         
+          .statusTag {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            width: fit-content;
+            padding: 8px 16px;
+            cursor: pointer;
+            margin-right: 0px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 12px;
+        }
+        }
+      
+        .eventInfoCard__inner {
+      
+          .eventInfo {
+            .eventTitle {
+              font-size: 40px;
+              font-weight: 700;
+              color: #333;
+              margin-bottom: 20px;
+              max-width: 1000px;
+            }
+      
+            .eventDate {
+              font-size: 20px;
+              color: #484848;
+              font-weight: 600;
+              margin-bottom: 10px;
+            }
+      
+            .eventLocation {
+              font-size: 18px;
+              font-weight: 600;
+              color: #484848;
+              margin-bottom: 20px;
+            }
+      
+            .eventUrl {
+              font-size: 16px;
+              background-color: #e7f0ff7b;
+              padding: 10px 20px;
+              border-radius: 10px;
+      
+              &__text {
+                font-size: 16px;
+                color: #363636;
+              }
+
+              &__Link {
+                text-decoration: underline;
+                padding: 0px;
+              }
+            }
+          }
+        }
+    }
+      
+  
+    .eventStats {
+        margin-bottom: 50px;
+
+        &__card {
+            flex: 1;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .eventStats__cardContent {
+
+                .eventStats__icon {
+                  font-size: 40px;
+                  color: #4caf50;
+                }
+          
+                .eventStats__title {
+                  font-size: 16px;
+                }
+          
+                .eventStats__value {
+                  font-size: 24px;
+                  font-weight: 600;
+                  color: #000;
+                }
+              }
+          }
+    }
+
+    .ticketsTable,
+    .buyersTable {
+      margin-bottom: 50px;
+    
+      .ant-table {
+        background-color: #fff;
+        border-radius: 8px;
+    
+        .ant-table-tbody > tr:hover {
+          background-color: #f5f5f5;
+        }
+    
+        .ant-table-thead {
+          background: #f3f9ff;
+
+          .ant-table-cell {
+            background: #f3f9ff;
+            font-size: 16px;
+          }
+        }
+    
+        .ant-table-cell {
+          padding: 15px 20px;
+          font-size: 14px;
+        }
+      }
+    
+      &__title {
+        font-weight: 700;
+        margin-bottom: 27px;
+        color: #333; 
+      }
+    }
+    
+  }
+  

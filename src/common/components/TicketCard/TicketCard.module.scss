@@ -1,0 +1,55 @@
+.ticketCard {
+    border: 1px solid #d6d6d6;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &.disabledTicket {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 600;
+
+        &:not(:last-child) {
+          margin-bottom: 10px;
+        }
+
+        .ticketTitle {
+          color: #363636;
+
+          .soldOutBadge {
+            display: block;
+            color: rgb(255, 195, 195);
+          }
+        }
+
+        .counter {
+      
+          .counterButton {
+    
+          }
+    
+          .countNumber {
+            text-align: center;
+            font-weight: 500;
+          }
+        }
+          
+        .ticketPrice {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f3960;
+        }
+    }
+
+    &__description {
+      font-size: 16px;
+      color: #000;
+    }
+}

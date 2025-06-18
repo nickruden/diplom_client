@@ -1,0 +1,1 @@
+export { default as PopularList } from "./components/PopularList/PopularList";

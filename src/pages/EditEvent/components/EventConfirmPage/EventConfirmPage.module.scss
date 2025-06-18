@@ -1,0 +1,33 @@
+.createEventPage {
+    height: 100%;
+
+    .formContent {
+        margin-bottom: 70px;
+
+        .errorMessage {
+            padding: 20px;
+            background-color: rgb(255, 218, 218);
+            border: 2px solid red;
+            border-radius: 20px;
+            margin-bottom: 50px;
+        
+            .errorText {
+              color: rgb(43, 43, 43);
+              text-align: center;
+            }
+          }
+    }
+
+    .formActions {
+        .buttonSave {
+            margin-bottom: 100px;
+            padding: 10px 20px;
+            background: rgb(215, 108, 15);
+            width: 100%;
+
+            &:hover {
+                background: rgb(196, 99, 14) !important;
+            }
+        }
+    }
+}

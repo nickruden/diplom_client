@@ -1,0 +1,1 @@
+export { default as EventPage } from './components/EventPage/EventPage';

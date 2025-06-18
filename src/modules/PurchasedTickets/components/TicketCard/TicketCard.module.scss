@@ -1,0 +1,122 @@
+.ticketsWrapper {
+  max-width: 1000px;
+
+  &.ticketCompleted {
+    opacity: 0.6;
+    filter: grayscale(100%);
+    pointer-events: auto;
+  }
+
+
+.ticket {
+  display: flex;
+  background: #FFF;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1000px;
+  min-height: 200px;
+  border-radius: 20px;
+  transition: all .4s;
+
+  &:hover {
+    box-shadow: 0 10px 20px rgba(160, 160, 160, 0.212);
+    transform: translateY(-5px)
+  }
+
+  .inner {
+    border: 1px solid rgb(181, 181, 181);
+    border-radius: 20px;
+    height: 100%;
+
+    .imageWrapper {
+      flex: 0 0 240px;
+      overflow: hidden;
+      max-height: 250px;
+    }
+
+    .ticketInfo {
+      padding: 20px;
+
+      .header {
+        margin-bottom: 30px;
+
+        .eventDate {
+          color: #626262;
+          font-weight: 600;
+          font-size: 20px;
+        }
+
+        .eventNameWrap {
+          margin-bottom: 0px;
+          max-width: 450px;
+
+          .eventName {
+            margin: 0px;
+            font-weight: 800;
+            color: #222;
+          }
+        }
+      }
+
+      .details {
+        .value {
+          font-size: 16px;
+          font-weight: 500;
+          color: #525252;
+          padding: 10px;
+          border: 1px solid rgb(144, 144, 144);
+          max-width: 300px;
+        }
+      }
+    }
+  }
+  
+  .qrSection {
+    background: #ffdfae;
+    padding: 20px;
+    border-radius: 20px;
+    border: 2px dashed rgb(181, 181, 181);
+  
+    .ticketId {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+    }
+  
+    &.online {
+      flex-direction: column;
+
+      .onlineAccessBlock {
+        align-self: flex-end;
+        background-color: #f5f7fa;
+        padding: 20px 20px 20px 50px;
+        border-radius: 20px;
+        font-size: 16px;
+        width: 763px;
+  
+        .link {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: #1677ff;
+          text-decoration: underline;
+        }
+  
+        .text {
+          font-size: 16px;
+          color: #535353;
+        }
+        
+        .description {
+              font-size: 16px;
+              line-height: 130%;
+              color: rgb(59, 59, 59);
+        }
+      }
+
+    }
+  
+  }
+}

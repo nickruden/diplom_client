@@ -1,0 +1,106 @@
+.eventPublishPage {
+  padding-top: 36px;
+  
+    &__header {
+  
+      .title {
+        font-weight: 700;
+        font-size: 35px;
+      }
+  
+      .subtitle {
+        font-size: 18px;
+        font-weight: 600;
+        color: #3A3247;
+        margin-bottom: 24px;
+      }
+    }
+  
+    &__eventInfo {
+      padding: 20px;
+      background-color: #F8F7FA;
+      border-radius: 30px;
+  
+      .category {
+        padding: 10px 20px;
+        border-radius: 10px;
+        display: inline-block;
+        border: 1px solid;
+        font-size: 16px;
+        font-weight: 600;
+      }
+  
+    }
+  
+    &__settingsEvent {
+  
+      .title {
+        font-weight: 700;
+        font-size: 22px;
+        margin-bottom: 30px;
+      }
+  
+      .infoBlock {
+  
+        &:not(:last-child) {
+          margin-bottom: 50px;
+        }
+  
+        &__header {
+  
+          .infoBlocktitle {
+              font-size: 18px;
+              font-weight: 700;
+          }
+        }
+  
+        .grayText {
+          line-height: 1.2;
+          color: #766B7A;
+        }
+      }
+    }
+  
+    .tariffs {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+  
+      .tariffCard {
+        flex: 0 1 calc(33% - 20px);
+        cursor: pointer;
+        transition: 0.3s ease;
+        position: relative;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+  
+        &__title {
+          font-size: 16px;
+          font-weight: 700;
+          margin-bottom: 8px;
+        }
+  
+        &.selected {
+          border: 1px solid #1890ff;
+        }
+  
+        .checkIcon {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          font-size: 18px;
+          color: #52c41a;
+        }
+      }
+    }
+  
+    .publishBtn {
+      margin-top: 40px;
+      width: 100%;
+      height: 48px;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+  }
+  

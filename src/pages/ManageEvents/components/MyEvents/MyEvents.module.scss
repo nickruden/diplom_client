@@ -1,0 +1,110 @@
+.eventManagementPage {
+    padding: 0px 0px 100px 0px;
+
+    .title {
+        margin-bottom: 30px;
+        font-weight: 700;
+        font-size: 60px;
+    }
+
+    .filters {
+        margin-bottom: 50px;
+    }
+
+    .statsTable {
+
+        .tableHeader {
+            background-color: #f0f2f5b5;
+            font-weight: 600;
+            padding: 20px 24px;
+            border-radius: 5px 5px 0px 0px;
+
+            &__title {
+                font-size: 14px;
+            }
+        }
+
+        .tableEventList {
+
+            .eventItem {
+                padding: 0px 24px;
+
+                &:hover {
+                    box-shadow: 0px 2px 10px 0px rgb(230, 230, 230);
+                }
+
+                &__body {
+                    padding: 18px 0px;
+
+                    .eventItem__inner {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        width: 100%;
+                        cursor: pointer;
+
+                        .eventCardInfo {
+                            max-width: 350px;
+
+                            .imageWrap {
+                                max-width: 60px;
+                                height: 60px;
+                                width: 100%;
+
+                                img {
+                                    width: 100%;
+                                    height: 100%;
+                                    object-fit: cover;
+                                }
+
+                                .image {
+                                    width: 100%;
+                                    height: 100%;
+                                    background-color: rgba(241, 241, 241, 0.879);
+                                }
+                            }
+
+                            .cardBody {
+
+                                .titleWrap {
+                                    margin-bottom: 5px;
+
+                                    .title {
+                                        margin-bottom: 0px;
+                                        font-size: 16px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    .eventCardStatus {
+                        .statusTag {
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+                            width: fit-content;
+                            padding: 5px 10px;
+                            cursor: pointer;
+                            margin-right: 0px;
+                            font-size: 14px;
+                            border-radius: 100px;
+                        }
+                    }
+
+                    .eventCardOptions {
+
+                        .options {
+                            padding: 5px;
+                            border-radius: 100px;
+
+                            &:hover {
+                                background-color: rgba(205, 205, 205, 0.222);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

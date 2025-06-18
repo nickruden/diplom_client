@@ -1,0 +1,51 @@
+.custom-dropdown {
+
+    .ant-dropdown-menu {
+      padding: 8px 0;
+      border-radius: 8px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.214);
+      background-color: #fff;
+      min-width: 250px;
+  
+      .ant-dropdown-menu-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 12px 16px 12px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        transition: background-color 0.2s;
+        
+        &:hover {
+          background-color: #f5f5f5c8;
+        }
+  
+        .anticon {
+          font-size: 18px;
+        }
+
+        .ant-dropdown-menu-title-content {
+            display: flex;
+            align-items: center;
+            
+            a {
+                display: flex;
+                align-items: center;
+
+                svg {
+                    margin-right: 10px;
+                }
+            }
+        }
+      }
+    }
+
+    &.special-first {
+
+        .ant-dropdown-menu[data-menu-id$="1"] {
+            background-color: #e3e3e3;
+        }
+    }
+  }

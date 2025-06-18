@@ -1,0 +1,133 @@
+.eventDetails {
+
+    &__description {
+        max-width: 750px;
+        width: 100%;
+
+        .eventCategory {
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+            border: 1px solid;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .eventTitle {
+            font-weight: 700;
+            font-size: 60px;
+            margin-bottom: 40px;
+        }
+
+        .innerTitle {
+            font-weight: 700;
+        }
+
+        .eventCreator {
+            margin-bottom: 50px;
+            
+            .creatorCard {
+                border-radius: 20px;
+                padding: 18px;
+                background-color: #ececec9c;
+
+                .creatorAvatar {
+                }
+
+                .creatorName {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #333;
+                }
+
+                .creatorFollowers {
+                    font-size: 14px;
+                    color: #666;
+                  }
+            }
+        }
+
+        .date {
+            margin-bottom: 50px;
+
+            &Body {
+                font-size: 16px;
+                color: rgb(59, 59, 59);
+
+                .dateFull {
+                    margin-left: 20px;
+                }
+
+                .eventLasts {
+                    margin-left: 20px;
+                }
+            }
+        }
+
+        .refound {
+            margin-bottom: 50px;
+
+            .refoundBody {
+                font-size: 16px;
+                color: rgb(59, 59, 59);
+
+                .refoundText {
+                    margin-left: 20px;
+                }
+            }
+        }
+
+        .location {
+            margin-bottom: 50px;
+
+            &Body {
+                font-size: 16px;
+                font-weight: 600;
+                color: rgb(101, 101, 101);
+
+                .locationAddress {
+                    margin-left: 20px;
+                }
+            }
+
+        }
+
+        .description {
+            margin-bottom: 50px;
+
+            &Text {
+                font-size: 16px;
+                line-height: 130%;
+                color: rgb(59, 59, 59);
+            }
+        }
+
+        .tickets {
+            margin-bottom: 50px;
+            scroll-margin-top: 180px;
+
+            .ticketsContainer {
+                max-height: 400px;
+                overflow: auto;
+
+                .ticket {
+                    flex: 1 1 calc(100% - 30px);
+                }
+            }
+
+            .ticketsGroup {
+                
+            }
+        }
+
+        .creatorEvents {
+            padding-top: 60px;
+            
+            &__title {
+                font-weight: 700;
+                color: rgb(59, 59, 59);
+            }
+        }
+    }
+}

@@ -1,0 +1,104 @@
+.creatorPageHeader {
+    position: relative;
+    min-height: 400px;
+    margin-bottom: 160px;
+    overflow: visible;
+
+    &__bgImg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        background-color: orange;
+    }
+
+    &__content {
+        background-color: #FFF;
+        max-width: 800px;
+        border-radius: 30px;
+        overflow: hidden;
+        position: relative;
+        z-index: 5;
+        padding: 60px 20px;
+        margin: 0 auto;
+        text-align: center;
+        top: 70px;
+        box-shadow: 0px 5px 10px 0px #aaaaaa7e;
+
+        .creatorPageHeader__contentInner {
+
+            .creatorImg {
+                margin-bottom: 20px;
+            }
+
+            .creatorName {
+                font-size: 50px;
+                font-weight: 700;
+                margin-bottom: 30px;
+
+                .creatorNameLink {
+                    color: rgba(0, 0, 0, 0.88)!important;
+
+                    &:hover {
+                        opacity: 0.8;
+                    }
+                }
+            }
+
+            .creatorInfo {
+                margin-bottom: 30px;
+
+                .stats {
+
+                    :global {
+                        .ant-statistic {
+                          &-title {
+                            margin-bottom: 4px;
+                            color: rgba(0, 0, 0, 0.45);
+                            font-size: 14px;
+                            line-height: 1.5;
+                          }
+            
+                          &-content {
+                            color: rgb(54 54 54 / 88%);
+                            font-size: 20px;
+                            line-height: 1.2;
+                          }
+                        }
+                    }
+
+                    .statItem {
+                        font-size: 12px;
+                        font-weight: 600;
+                    }
+
+                    .divider {
+                        border-inline-start: 1px solid rgba(82, 82, 82, 0.226);
+                        height: 100%;
+                        margin: 3px;
+                    }
+
+                }
+
+                .followButton {
+                    align-self: center;
+                }
+            }
+
+            .creatorPageHeader__desc {
+                font-size: 14px;
+                max-width: 600px;
+                margin-bottom: 30px;
+            }
+
+            .creatorPageHeader__socials {
+
+                .socialLink {
+
+                }
+            }
+        }
+    }
+}

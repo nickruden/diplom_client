@@ -1,0 +1,60 @@
+.eventPreviewCard {
+    background: #fff;
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: hidden;
+
+    &__bgIcon {
+      position: absolute;
+      top: -22px;
+      right: -6px;
+      transform: rotate(10deg);
+      color: rgba(215, 108, 15, 0.314);
+    }
+  
+    &__header {
+      margin-bottom: 10px;
+
+      .title {
+        margin-top: 18px;
+        font-size: 26px;
+        font-weight: 700;
+      }
+
+      .dateInfo {
+        color: #585163;
+        margin-bottom: 18px;
+
+        .dateIcon {
+          color: #585163;
+        }
+
+        .dateText {
+          font-size: 16px;
+          font-weight: 700;
+          color: #585163;
+          
+        }
+      }
+
+      .statusTag {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        width: fit-content;
+        padding: 5px 10px;
+        cursor: pointer;
+        margin-right: 0px;
+        font-size: 14px;
+        border-radius: 100px;
+      }
+
+      .prviewButton {
+        font-size: 16px;
+        display: block;
+      }
+    }
+  }
+  

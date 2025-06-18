@@ -1,0 +1,1 @@
+export { default as FavoriteList } from './components/FavoriteList/FavoriteList'

@@ -1,0 +1,33 @@
+.categoryCover {
+
+    &__inner {
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+
+        .categoryCover__texts {
+
+            .title{
+                font-weight: 700;
+                font-size: 50px;
+                margin-bottom: 16px!important;
+            }
+
+            .text {
+                font-size: 18px;
+                font-weight: 400;
+            }
+        }
+
+        .categoryCover__icon {
+            height: 127px;
+            width: 100px;
+
+            svg {
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
+            }
+        }
+    }
+}

@@ -1,0 +1,1 @@
+export { default as FiltersList } from './components/FiltersList/FiltersList'

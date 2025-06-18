@@ -1,0 +1,89 @@
+.ticketsPage {
+  padding-top: 36px;
+
+    &__title {
+      font-weight: 700;
+      font-size: 30px;
+      margin-bottom: 50px;
+    }
+  
+    &__header {
+      margin-bottom: 40px;
+  
+      .addButton {
+        font-weight: 600;
+        color: rgb(215, 108, 15);
+      }
+    }
+  
+    .ticketsInfo {
+      padding: 16px 60px;
+      border-top: 1px solid rgb(209, 209, 209);
+      border-bottom: 1px solid rgb(209, 209, 209);
+      max-width: 900px;
+      margin-bottom: 30px;
+  
+      .ticketsCount {
+        font-weight: 700;
+        font-size: 16px;
+      }
+    }
+
+    .validityGroup {
+      .validityTitle {
+        padding-left: 24px;
+        font-weight: 700;
+      }
+    }
+
+    .ticketCard {
+      max-width: 900px;
+      padding: 25px 55px 25px 20px;
+      border-bottom: 1px solid rgb(209, 209, 209);
+      position: relative;
+      transition: opacity 0.3s ease;
+  
+      &:hover {
+        box-shadow: 2px 0px 10px 0px rgb(220, 220, 220);
+        cursor: pointer;
+      }
+
+      .deleting {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      
+      .deletingOverlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        backdrop-filter: blur(2px);
+        background-color: rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        z-index: 1;
+      }
+
+      .inner {
+        width: 100%;
+      }
+      
+      .title {
+        margin-bottom: 0px!important;
+      }
+
+      .settingsButton {
+        padding: 5px;
+        border-radius: 100px;
+
+        &:hover {
+          background-color: rgba(205, 205, 205, 0.222);
+        }
+      }
+    }
+  }
+  

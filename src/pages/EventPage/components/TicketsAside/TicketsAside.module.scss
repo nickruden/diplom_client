@@ -1,0 +1,65 @@
+.ticketsAside {
+
+    .stickyCard {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+        .ticketsContainer {
+            max-height: 260px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+
+            &::-webkit-scrollbar {
+                width: 3px; /* Уменьшаем ширину скроллбара */
+              }
+              
+            &::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 2px;
+              }
+              
+            &::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 2px;
+              }
+              
+            &::-webkit-scrollbar-thumb:hover {
+                background: #555;
+              }
+
+        }
+
+        .cardInfo {
+
+            .totalCount {
+                font-size: 18px;
+                font-weight: 600;
+            }
+
+            .buyButton {
+                font-weight: 500;
+              }
+
+              .actionButtons {
+
+                .actionButton {
+                    display: flex;
+                    align-items: center;
+                    color: #666;
+                    cursor: auto;
+                    
+                    &:hover {
+                      color: #1890ff;
+                    }
+                  }
+
+                  .divider {
+                    height: 30px;
+                    width: 1px;
+                  }
+              }
+        }
+
+      }
+      
+}

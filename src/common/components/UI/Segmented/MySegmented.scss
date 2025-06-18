@@ -1,0 +1,12 @@
+.my-segmented {
+    margin-bottom: 16px;
+    border-radius: 12px;
+    background-color: #d9e1ff;
+  
+    :global(.ant-segmented-item-selected) {
+      background-color: #3056d3 !important;
+      color: white !important;
+      font-weight: 600;
+    }
+  }
+  

@@ -1,0 +1,1 @@
+export { default as TicketsList } from './components/TicketsList/TicketsList'

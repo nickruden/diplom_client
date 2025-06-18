@@ -1,0 +1,1 @@
+export { SearchEvents } from './components/SearchEvents';

@@ -1,0 +1,15 @@
+.textEditorComponent {
+    .ql-container {
+        min-height: 200px; // или сколько тебе нужно
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .ql-editor {
+        min-height: 200px; // это регулирует именно зону редактирования
+        font-size: 16px;
+        line-height: 130%;
+        color: rgb(59, 59, 59);
+    }
+
+}

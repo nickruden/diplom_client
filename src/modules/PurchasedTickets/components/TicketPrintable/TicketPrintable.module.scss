@@ -1,0 +1,22 @@
+.ticketPdf {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  background: white;
+  padding: 40px;
+  max-width: 600px;
+  color: #000;
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  p {
+    margin: 8px 0;
+  }
+
+  strong {
+    color: #333;
+  }
+}
