@@ -6,7 +6,7 @@ import { deleteAuthTokens } from "../utils/MyStorage/tokens/deleteAuthTokens";
 import { getNewTokens } from "./services/auth/endpoints";
 
 const apiInstance = axios.create({
-  baseURL: "https://contevents.onrender.com/api/",
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
